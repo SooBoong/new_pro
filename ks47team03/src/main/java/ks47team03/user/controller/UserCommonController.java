@@ -136,12 +136,28 @@ public class UserCommonController {
 			return "user/join";                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 		}
 		
+		
+		
+		// 멤버 담당 기능 화면4 - 최수봉
+			@GetMapping("/subong")
+			public String introsubong(Model model,  HttpSession session) {
+					
+				session.setAttribute("SID","adminid001");
+				session.setAttribute("SLEVEL","관리자");
+				session.setAttribute("SNICKNAME","관리자");
+					
+				model.addAttribute("title","최수봉 담당 기능 소개");			
+					
+				return "user/subong";
+				}	
+		
+		
 		// 멤버 담당 기능 화면3 - 현주열
 		@GetMapping("/juyeol")
 		public String introJuyeol(Model model,  HttpSession session) {
 			
 			session.setAttribute("SID","adminid001");
-			session.setAttribute("SLEVEL",1);
+			session.setAttribute("SLEVEL","관리자");
 			session.setAttribute("SNICKNAME","관리자");
 			
 			model.addAttribute("title","현주열 담당 기능 소개");			
@@ -162,46 +178,19 @@ public class UserCommonController {
 			return "user/hyeonjeong";
 		}	
 		
-		// 멤버 담당 기능 화면1 - 관리자 권한 강제 부여
-        @GetMapping("/sori/adminLogin")
-        public String adminLogin(Model model, HttpSession session) {
-            String SLEVEL = "관리자";
-            session.setAttribute("SID","adminid001");
-            session.setAttribute("SLEVEL","관리자");
-            session.setAttribute("SNAME","이소리");
-            session.setAttribute("SNICKNAME","관리자001");
-            
-            model.addAttribute("title","이소리 담당 기능 소개");            
-            model.addAttribute("SLEVEL",SLEVEL);  
-            
-            return "user/sori";
-        }   
-		
-		// 멤버 담당 기능 화면1 - 사용자 권한 강제 부여
-		@GetMapping("/sori/userLogin")
-		public String userLogin(Model model, HttpSession session) {
-            String SLEVEL = "일반사용자";
-			session.setAttribute("SID","userid001");
-			session.setAttribute("SLEVEL","일반사용자");
-			session.setAttribute("SNAME","이소리");
-			session.setAttribute("SNICKNAME","낫쏘리");
+		// 멤버 담당 기능 화면1 - 이소리
+		@GetMapping("/sori")
+		public String introSori(Model model,  HttpSession session) {
 			
-            model.addAttribute("title","이소리 담당 기능 소개");            
-            model.addAttribute("SLEVEL",SLEVEL);  
+			session.setAttribute("SID","adminid001");
+			session.setAttribute("SLEVEL","관리자");
+			session.setAttribute("SNAME","이소리");
+			session.setAttribute("SNICKNAME","관리자");
+			
+			model.addAttribute("title","이소리 담당 기능 소개");			
 			
 			return "user/sori";
 		}		
-		
-		// 멤버 담당 기능 화면1 - 이소리
-        @GetMapping("/sori")
-        public String introSori(Model model,  HttpSession session) {
-            String SLEVEL = (String) session.getAttribute("SLEVEL");
-
-            model.addAttribute("title","이소리 담당 기능 소개");            
-            model.addAttribute("SLEVEL",SLEVEL);  
-            
-            return "user/sori";
-        }       
 				
 		// 프로젝트 소개 화면
 		@GetMapping("/projectIntro")
