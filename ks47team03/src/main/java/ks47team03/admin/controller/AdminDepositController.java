@@ -23,18 +23,16 @@ public class AdminDepositController {
 	
 	// 의존성 주입
 	private final AdminDepositService depositService;
-
 	public AdminDepositController(AdminDepositService depositService) {
 		this.depositService = depositService;
 	}	
 	
-	
-	
 	//보증금 내역 관리
 	@SuppressWarnings("unchecked")
 	@GetMapping("/depositManage")
-	public String depositManage(@RequestParam(value="currentPage", required = false ,defaultValue = "1")int currentPage,
-			Model model) {
+	public String depositManage(@RequestParam(value="currentPage",
+								required = false ,defaultValue = "1")int currentPage,
+								Model model) {
 		Map<String,Object> resultMap = depositService.getDepositManageList(currentPage);
 		int lastPage = (int)resultMap.get("lastPage");
 		List<Map<String,Object>> depositManageList = (List<Map<String,Object>>)resultMap.get("depositManageList");
@@ -143,8 +141,7 @@ public class AdminDepositController {
 		 return "redirect:depositStandard";
 				 }
 		
-		 
-		
+		 		
 		@PostMapping("/deleteDepositStandard")
 		public String deleteDepositStandardPost(@RequestParam(value="waitingDepositStandardCode") String waitingDepositStandardCode,
 												@RequestParam(value="adminId") String adminId,
@@ -166,19 +163,56 @@ public class AdminDepositController {
 				
 				return "redirect:deleteDepositStandard";
 			}
+	
+		
+		@GetMapping("/createDepositStandard")
+			public String createDepositStandardGet(@RequestParam(value="waitingDepositStandardCode") String waitingDepositStandardCode,
+									@RequestParam(value="msg", required = false) String msg,
+													Model model) {
 			
+				model.addAttribute("title", "보증금 기준 생성");
+				model.addAttribute("waitingDepositStandardCode", waitingDepositStandardCode);
+				if(msg != null) model.addAttribute("msg", msg);
+				
+				return "admin/deposit/createDepositStandard";
+			}	
+	
+		@PostMapping("/createDepositStandard")
+		public String createDepositStandardPost(@RequestParam(value="waitingDepositStandardCode") String waitingDepositStandardCode,
+												@RequestParam(value="adminId") String adminId,
+												RedirectAttributes reAttr) {
+				
+				// 회원 여부 검증
+				Map<String, Object> isValidMap = depositService.isValidDepositStandard(waitingDepositStandardCode, adminId);
+				boolean isValid = (boolean) isValidMap.get("isValid");				
+				// 비밀번호 일치 회원탈퇴
+				if(isValid) {
+					DepositStandard createDepositStandardInfo = (DepositStandard) isValidMap.get("deleteDepositStandardInfo");	
+					depositService.createDepositStandard(createDepositStandardInfo);
+					return "redirect:depositStandard";
+				}
+				
+				reAttr.addAttribute("adminId", adminId);
+				reAttr.addAttribute("msg", "관리자 확인해주세요");				
+				return "redirect:createDepositStandard";
+			}
+	
+			//삭제 코드 
 			@GetMapping("/deleteDepositStandard")
 			public String deleteDepositStandardGet(@RequestParam(value="waitingDepositStandardCode") String waitingDepositStandardCode,
 												 @RequestParam(value="msg", required = false) String msg,
 													Model model) {
 				
-				model.addAttribute("title", "회원탈퇴");
+				model.addAttribute("title", "보증금 기준 삭제");
 				model.addAttribute("waitingDepositStandardCode", waitingDepositStandardCode);
 				if(msg != null) model.addAttribute("msg", msg);
 				
 				return "admin/deposit/deleteDepositStandard";
 			}
+				
+		
 			
+			// ajax 기준 코드 
 			@PostMapping("/modifyCheck")
 			@ResponseBody
 			public int modifyCheck(@RequestParam(value="waitingDepositPeriod")int waitingDepositPeriod) {
@@ -187,6 +221,7 @@ public class AdminDepositController {
 				return waitingDepositPeriod;
 			}
 		
-
-
+			
+			
+			
 }

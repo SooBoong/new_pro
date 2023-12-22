@@ -238,6 +238,10 @@ private static final Logger log = LoggerFactory.getLogger(AdminCommonService.cla
 		adminDepositMapper.deleteDepositStandardById(depositStandard);
 		
 	}
+	public void createDepositStandard(DepositStandard depositStandard) {
+		adminDepositMapper.createDepositStandardById(depositStandard);
+		
+	}
 
 	public Map<String, Object> isValidDepositStandard(String waitingDepositStandardCode, String adminId) {
 		Map<String, Object> resultMap = new HashMap<String, Object>();

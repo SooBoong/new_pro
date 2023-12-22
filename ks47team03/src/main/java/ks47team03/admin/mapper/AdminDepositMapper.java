@@ -37,6 +37,8 @@ public interface AdminDepositMapper {
 	public int modifyDepositStandard(DepositStandard depositStandard);
 	
 
+	public int createDepositStandardById(DepositStandard depositStandard);
+
 	public int deleteDepositStandardById(DepositStandard depositStandard);
 	
 	public int modifyDepositStandardById(DepositStandard depositStandard);

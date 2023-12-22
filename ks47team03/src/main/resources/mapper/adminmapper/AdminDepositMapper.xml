@@ -8,8 +8,6 @@
 <mapper namespace="ks47team03.admin.mapper.AdminDepositMapper">
 
 
-
-
 <resultMap type="DepositStandard" id="depositStandardResultMap">
 		<id 	column="waiting_deposit_standard_code" 		property="waitingDepositStandardCode"/>
 		<result column="waiting_deposit_period" 		property="waitingDepositPeriod"/>
@@ -17,6 +15,8 @@
 		<result column="admin_id" 	property="adminId"/>
 		<result column="up_datetime" 	property="upDatetime"/>
 	</resultMap>
+
+
 	
 	<delete id="deleteDepositStanardById" parameterType="String">
 		/* 기준삭제 삭제 */
@@ -31,6 +31,14 @@
 
 
 	
+
+
+
+
+
+
+
+
 	<select id="getDepositRefundList" parameterType="map" resultType="map">
 		/* 보증금 환급 관리 */
 		SELECT
@@ -177,10 +185,17 @@
 				up_datetime = NOW()
 			</if>
 		</trim>
+		
 		WHERE
 			admin_id = #{adminId}
 	</update>
-<select id="modifyCheck" resultType="int" parameterType="int">
+	
+
+
+
+
+
+ 	<select id="modifyCheck" resultType="int" parameterType="int">
 		/* 사용중인 만료기간 */
 		SELECT 
 			wds.waiting_deposit_period
@@ -189,6 +204,4 @@
 		WHERE 
 			wds.waiting_deposit_period = #{waitingDepositPeriod};
 	</select> 
-	
-	
 </mapper>
