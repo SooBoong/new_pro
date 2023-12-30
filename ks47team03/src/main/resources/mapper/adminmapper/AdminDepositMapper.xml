@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper
-    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <!-- dao 작성 -->
 <!-- namespace : implememts와 같은 기능 -->
 <mapper namespace="ks47team03.admin.mapper.AdminDepositMapper">
 
 
-<resultMap type="DepositStandard" id="depositStandardResultMap">
+	<resultMap type="DepositStandard" id="depositStandardResultMap">
 		<id 	column="waiting_deposit_standard_code" 		property="waitingDepositStandardCode"/>
 		<result column="waiting_deposit_period" 		property="waitingDepositPeriod"/>
 		<result column="set_datetime" 	property="setDatetime"/>
@@ -17,76 +17,79 @@
 	</resultMap>
 
 
-	
+
 	<delete id="deleteDepositStanardById" parameterType="String">
-		/* 기준삭제 삭제 */
+		/* 기준삭제 */
 		DELETE
 		FROM
-			waiting_deposit_standard
+		waiting_deposit_standard
 		WHERE
-			admin_id = #{adminId};
+		admin_id = #{adminId};
 	</delete>
 
 
-
-
-	
-
-
-
-
-
-
+	<insert id="createDepositStandardById" parameterType="DepositStandard">
+		/* 기준 등록 */
+		INSERT
+		  INTO waiting_deposit_standard
+		VALUES (
+				#{waitingDepositStandardCode}
+		      , #{waitingDepositPeriod}
+		      , NOW()
+		      , #{adminId}
+		      , NOW()
+				)
+	</insert>
 
 
 	<select id="getDepositRefundList" parameterType="map" resultType="map">
 		/* 보증금 환급 관리 */
 		SELECT
-			DRH.deposit_refund_histroy_code AS depositRefundHistroyCode,
-			DRH.user_id AS userId,
-			DRH.user_name AS userName,
-			DRH.account_user_name AS accountUserName,
-			DRH.bank_name AS bankName,
-			DRH.account_number AS accountNumber,
-			DRH.deposit_refund_result AS depositRefundResult,
-			cast(DRH.up_datetime AS CHAR(20)) AS upDatetime
+		DRH.deposit_refund_histroy_code AS depositRefundHistroyCode,
+		DRH.user_id AS userId,
+		DRH.user_name AS userName,
+		DRH.account_user_name AS accountUserName,
+		DRH.bank_name AS bankName,
+		DRH.account_number AS accountNumber,
+		DRH.deposit_refund_result AS depositRefundResult,
+		cast(DRH.up_datetime AS CHAR(20)) AS upDatetime
 		FROM
-			deposit_refund_histroy AS DRH
-			order by length(DRH.deposit_refund_histroy_code),DRH.deposit_refund_histroy_code
-		        
+		deposit_refund_histroy AS DRH
+		order by length(DRH.deposit_refund_histroy_code),DRH.deposit_refund_histroy_code
+
 		<if test="startIndex != null and startIndex > -1 ">
 			LIMIT #{startIndex},#{rowPerPage};
 		</if>
 	</select>
-	
-	
+
+
 	<select id="getDepositRefundListCount" resultType="int">
 		/* 기준 행 계산*/
 		SELECT
-			COUNT(*)
+		COUNT(*)
 		FROM
-			deposit_refund_histroy
+		deposit_refund_histroy
 	</select>
 
 	<select id="getDepositPrice" resultType="int">
 		/* 컵 대여 보증급 기준 조회 */
 		SELECT
-			cup_rental_price
+		cup_rental_price
 		FROM
-			cup_price_standard
+		cup_price_standard
 	</select>
 
 	<select id="getDepositStandardList" parameterType="map" resultType="map">
 		/* 보증금 기준 관리 */
 		SELECT
-			wds.waiting_deposit_standard_code AS waitingDepositStandardCode,
-			wds.waiting_deposit_period AS waitingDepositPeriod,
-			wds.set_datetime AS setDatetime,
-			wds.admin_id AS adminId,
-			wds.up_datetime AS upDatetime
-			FROM
-			waiting_deposit_standard AS wds
-		
+		wds.waiting_deposit_standard_code AS waitingDepositStandardCode,
+		wds.waiting_deposit_period AS waitingDepositPeriod,
+		wds.set_datetime AS setDatetime,
+		wds.admin_id AS adminId,
+		wds.up_datetime AS upDatetime
+		FROM
+		waiting_deposit_standard AS wds
+
 		<if test="startIndex != null and startIndex > -1 ">
 			LIMIT #{startIndex},#{rowPerPage};
 		</if>
@@ -94,60 +97,60 @@
 	<select id="getDepositStandardListCount" resultType="int">
 		/* 기준 행 계산*/
 		SELECT
-			COUNT(*)
+		COUNT(*)
 		FROM
-			waiting_deposit_standard
-	</select> 
-	 
+		waiting_deposit_standard
+	</select>
+
 	<select id="getDepositPayList" parameterType="map" resultType="map">
 		/* 보증금 결제 관리 */
-			SELECT	
-				DPH.deposit_pay_histroy AS depositPayHistroy,
-				DPH.user_id AS userId,
-				DPH.charging_amount AS chargingAmount,
-				DPH.payment_method AS paymentMethod,
-				CAST(DPH.pay_application_datetime AS CHAR(20)) AS payApplicationDatetime,
-				CASE DPH.payment_method
-						WHEN '계좌이체' THEN CAST(DPH.pay_application_datetime AS CHAR(20))
-						ELSE CAST(DATE_ADD(DPH.pay_application_datetime, INTERVAL DPH.waiting_deposit_period DAY) AS CHAR(20))
-				END AS waitingDepositDatetime,
-				IFNULL(DPH.deposit_completion_datetime,'') AS depositCompletionDatetime,
-				SC.code_middle_type AS codeMiddleType 
-			FROM	
-				deposit_pay_histroy AS DPH
-				INNER JOIN 
-				static_code AS SC
-				ON
-				DPH.static_code = SC.static_code
-				order by length(DPH.deposit_pay_histroy),DPH.deposit_pay_histroy
+		SELECT
+		DPH.deposit_pay_histroy AS depositPayHistroy,
+		DPH.user_id AS userId,
+		DPH.charging_amount AS chargingAmount,
+		DPH.payment_method AS paymentMethod,
+		CAST(DPH.pay_application_datetime AS CHAR(20)) AS payApplicationDatetime,
+		CASE DPH.payment_method
+		WHEN '계좌이체' THEN CAST(DPH.pay_application_datetime AS CHAR(20))
+		ELSE CAST(DATE_ADD(DPH.pay_application_datetime, INTERVAL DPH.waiting_deposit_period DAY) AS CHAR(20))
+		END AS waitingDepositDatetime,
+		IFNULL(DPH.deposit_completion_datetime,'') AS depositCompletionDatetime,
+		SC.code_middle_type AS codeMiddleType
+		FROM
+		deposit_pay_histroy AS DPH
+		INNER JOIN
+		static_code AS SC
+		ON
+		DPH.static_code = SC.static_code
+		order by length(DPH.deposit_pay_histroy),DPH.deposit_pay_histroy
 
 		<if test="startIndex != null and startIndex > -1 ">
 			LIMIT #{startIndex},#{rowPerPage};
 		</if>
-		</select>
-		
-			
+	</select>
+
+
 	<select id="getDepositPayListCount" resultType="int">
 		/*결제 행 조회*/
 		SELECT
-			COUNT(*)
+		COUNT(*)
 		FROM
-			deposit_pay_histroy AS DPH
-	</select>  
-	
-	
+		deposit_pay_histroy AS DPH
+	</select>
+
+
 	<select id="getDepositManageList" parameterType="map" resultType="map">
 		/* 보증금 관리 조회 */
 		SELECT
-				DPRH.user_id AS userId,
-				DPRH.past_holding_deposit AS pastHoldingDeposit,
-				DPRH.deposit_pay_use_history AS depositPayUseHistory,
-				DPRH.deposit_using_type AS depositUsingType,
-				DPRH.past_holding_deposit+DPRH.deposit_pay_use_history AS currentHoldingDeposit,
-				cast(DPRH.up_datetime AS CHAR(20)) AS upDatetime
+		DPRH.user_id AS userId,
+		DPRH.past_holding_deposit AS pastHoldingDeposit,
+		DPRH.deposit_pay_use_history AS depositPayUseHistory,
+		DPRH.deposit_using_type AS depositUsingType,
+		DPRH.past_holding_deposit+DPRH.deposit_pay_use_history AS currentHoldingDeposit,
+		cast(DPRH.up_datetime AS CHAR(20)) AS upDatetime
 		FROM
-				deposit_pay_refund_history AS DPRH
-				order by length(DPRH.deposit_pay_refund_history_code),DPRH.deposit_pay_refund_history_code
+		deposit_pay_refund_history AS DPRH
+		order by length(DPRH.deposit_pay_refund_history_code),DPRH.deposit_pay_refund_history_code
 		<if test="startIndex != null and startIndex > -1 ">
 			LIMIT #{startIndex},#{rowPerPage};
 		</if>
@@ -155,24 +158,24 @@
 	<select id="getDepositManageListCount" resultType="int">
 		/* 기준 행 계산*/
 		SELECT
-			COUNT(*)
+		COUNT(*)
 		FROM
-			deposit_pay_refund_history
-	</select> 
-	
-	<select id="getDepositStandardInfoById" resultMap="depositStandardResultMap">
-    SELECT
-    * 
-    FROM 
-    waiting_deposit_standard
-    WHERE admin_id = #{adminId}
+		deposit_pay_refund_history
 	</select>
-	
-		<update id="modifyDepositStandard" parameterType="depositStandard">
+
+	<select id="getDepositStandardInfoById" resultMap="depositStandardResultMap">
+		SELECT
+		*
+		FROM
+		waiting_deposit_standard
+		WHERE admin_id = #{adminId}
+	</select>
+
+	<update id="modifyDepositStandard" parameterType="depositStandard">
 		/* 보증금 수정 */
-			UPDATE waiting_deposit_standard
-			<trim prefix="SET" suffixOverrides=",">
-			<if test="waitingDepositPeriod != null and waitingDepositPeriod != ''">						
+		UPDATE waiting_deposit_standard
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="waitingDepositPeriod != null and waitingDepositPeriod != ''">
 				waiting_deposit_period 	= #{waitingDepositPeriod},
 			</if>
 			<if test="setDatetime != null and setDatetime != ''">
@@ -185,23 +188,23 @@
 				up_datetime = NOW()
 			</if>
 		</trim>
-		
+
 		WHERE
-			admin_id = #{adminId}
+		admin_id = #{adminId}
 	</update>
-	
 
 
 
 
 
- 	<select id="modifyCheck" resultType="int" parameterType="int">
+
+	<select id="modifyCheck" resultType="int" parameterType="int">
 		/* 사용중인 만료기간 */
-		SELECT 
-			wds.waiting_deposit_period
+		SELECT
+		wds.waiting_deposit_period
 		FROM
-			waiting_deposit_standard as wds
-		WHERE 
-			wds.waiting_deposit_period = #{waitingDepositPeriod};
-	</select> 
+		waiting_deposit_standard as wds
+		WHERE
+		wds.waiting_deposit_period = #{waitingDepositPeriod};
+	</select>
 </mapper>

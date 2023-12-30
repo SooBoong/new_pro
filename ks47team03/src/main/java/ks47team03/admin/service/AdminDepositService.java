@@ -14,47 +14,47 @@ import ks47team03.user.dto.DepositStandard;
 
 @Service
 public class AdminDepositService {
- 
-private static final Logger log = LoggerFactory.getLogger(AdminCommonService.class);
-	
+
+	private static final Logger log = LoggerFactory.getLogger(AdminCommonService.class);
+
 	private final AdminDepositMapper adminDepositMapper;
-	
+
 	public AdminDepositService(AdminDepositMapper adminDepositMapper) {
 		this.adminDepositMapper = adminDepositMapper;
 	}
-	
+
 	//회원 보증금 환급 부분
 	public Map<String,Object> getDepositRefundList(int currentPage) {
 		int rowPerPage = 16;
-		
+
 		//페이지 계산(시작될 행의 인덱스)
 		int startIndex = (currentPage-1)*rowPerPage;
-		
+
 		double rowsCount = adminDepositMapper.getDepositRefundListCount();
-		
+
 		int lastPage = (int) Math.ceil(rowsCount/rowPerPage);
 		//Math.ceil 올림 처리
 		// 처음 번호
-        int startPageNum = 1;
+		int startPageNum = 1;
 
-        // 마지막 번호
-        int endPageNum = (lastPage < 10)? lastPage : 10;
+		// 마지막 번호
+		int endPageNum = (lastPage < 10)? lastPage : 10;
 
 
-        if(currentPage >= 7 && lastPage > 10) {
-        	startPageNum = currentPage - 5;
-            endPageNum = currentPage + 4;
-            if(endPageNum >= lastPage) {
-            	startPageNum = lastPage - 9;
-            	endPageNum = lastPage;
-            }
-        }
-        
+		if(currentPage >= 7 && lastPage > 10) {
+			startPageNum = currentPage - 5;
+			endPageNum = currentPage + 4;
+			if(endPageNum >= lastPage) {
+				startPageNum = lastPage - 9;
+				endPageNum = lastPage;
+			}
+		}
+
 		Map<String,Object> paramMap = new HashMap<String,Object>();
 		paramMap.put("startIndex", startIndex);
 		paramMap.put("rowPerPage", rowPerPage);
 		log.info("paramMap:{}",paramMap);
-		
+
 
 		List<Map<String,Object>> depositRefundList = adminDepositMapper.getDepositRefundList(paramMap);
 		log.info("전회 회원 보증금 목록:{}",depositRefundList);
@@ -65,42 +65,42 @@ private static final Logger log = LoggerFactory.getLogger(AdminCommonService.cla
 		paramMap.put("depositRefundList", depositRefundList);
 		paramMap.put("startPageNum", startPageNum);
 		paramMap.put("endPageNum", endPageNum);
-		
+
 		return paramMap;
 	}
-	
+
 	//회원 보증금 관리 부분
-	
+
 	public Map<String,Object> getDepositManageList(int currentPage) {
 		int rowPerPage = 16;
-		
+
 		//페이지 계산(시작될 행의 인덱스)
 		int startIndex = (currentPage-1)*rowPerPage;
-		
+
 		double rowsCount = adminDepositMapper.getDepositManageListCount();
-		
+
 		int lastPage = (int) Math.ceil(rowsCount/rowPerPage);
 		//Math.ceil 올림 처리
 		// 처음 번호
-        int startPageNum = 1;
+		int startPageNum = 1;
 
-        // 마지막 번호
-        int endPageNum = (lastPage < 10)? lastPage : 10;
+		// 마지막 번호
+		int endPageNum = (lastPage < 10)? lastPage : 10;
 
-        if(currentPage >= 7 && lastPage > 10) {
-        	startPageNum = currentPage - 5;
-            endPageNum = currentPage + 4;
-            if(endPageNum >= lastPage) {
-            	startPageNum = lastPage - 9;
-            	endPageNum = lastPage;
-            }
-        }
-        
+		if(currentPage >= 7 && lastPage > 10) {
+			startPageNum = currentPage - 5;
+			endPageNum = currentPage + 4;
+			if(endPageNum >= lastPage) {
+				startPageNum = lastPage - 9;
+				endPageNum = lastPage;
+			}
+		}
+
 		Map<String,Object> paramMap = new HashMap<String,Object>();
 		paramMap.put("startIndex", startIndex);
 		paramMap.put("rowPerPage", rowPerPage);
 		log.info("paramMap:{}",paramMap);
-		
+
 
 		List<Map<String,Object>> depositManageList = adminDepositMapper.getDepositManageList(paramMap);
 		log.info("전회 회원 보증금 목록:{}",depositManageList);
@@ -111,53 +111,53 @@ private static final Logger log = LoggerFactory.getLogger(AdminCommonService.cla
 		paramMap.put("depositManageList", depositManageList);
 		paramMap.put("startPageNum", startPageNum);
 		paramMap.put("endPageNum", endPageNum);
-		
+
 		return paramMap;
 	}
-	
+
 
 	//보증금 결제 관리
 	public Map<String,Object> getDepositPayList(int currentPage) {
 		int rowPerPage = 16;
-		
+
 		//페이지 계산(시작될 행의 인덱스)
 		int startIndex = (currentPage-1)*rowPerPage;
-		
+
 		double rowsCount = adminDepositMapper.getDepositPayListCount();
-		
+
 		int lastPage = (int) Math.ceil(rowsCount/rowPerPage);
 		//Math.ceil 올림 처리
 		// 처음 번호
-        int startPageNum = 1;
+		int startPageNum = 1;
 
-        // 마지막 번호
-        int endPageNum = (lastPage < 10)? lastPage : 10;
+		// 마지막 번호
+		int endPageNum = (lastPage < 10)? lastPage : 10;
 
-        
-        if(currentPage >= 7 && lastPage > 10) {
-        	startPageNum = currentPage - 5;
-            endPageNum = currentPage + 4;
-            if(endPageNum >= lastPage) {
-            	startPageNum = lastPage - 9;
-            	endPageNum = lastPage;
-            }
-        }
-        
+
+		if(currentPage >= 7 && lastPage > 10) {
+			startPageNum = currentPage - 5;
+			endPageNum = currentPage + 4;
+			if(endPageNum >= lastPage) {
+				startPageNum = lastPage - 9;
+				endPageNum = lastPage;
+			}
+		}
+
 		Map<String,Object> paramMap = new HashMap<String,Object>();
 		paramMap.put("startIndex", startIndex);
 		paramMap.put("rowPerPage", rowPerPage);
 		log.info("paramMap:{}",paramMap);
-		
+
 
 		List<Map<String,Object>> depositPayList = adminDepositMapper.getDepositPayList(paramMap);
 		log.info("전체 회원 목록:{}",depositPayList);
-	
-		paramMap.clear(); 
+
+		paramMap.clear();
 		paramMap.put("lastPage", lastPage);
 		paramMap.put("depositPayList", depositPayList);
 		paramMap.put("startPageNum", startPageNum);
 		paramMap.put("endPageNum", endPageNum);
-		
+
 		return paramMap;
 	}
 
@@ -167,17 +167,17 @@ private static final Logger log = LoggerFactory.getLogger(AdminCommonService.cla
 
 		return depositPrice;
 	}
-	
-	
-// 보증금 기준 관리 	
+
+
+	// 보증금 기준 관리
 	public Map<String,Object> getDepositStandardList(int currentPage) {
 		//보여질 행의 갯수
 		int rowPerPage = 16;
-		
+
 		//페이지 계산(시작될 행의 인덱스)
 		int startIndex = (currentPage-1)*rowPerPage;
-		
-		//마지막 페이지 계산 
+
+		//마지막 페이지 계산
 		//1. 보여질 테이블의 전체 행의 갯수
 		double rowsCount = adminDepositMapper.getDepositStandardListCount();
 		//int보다 더 넓은 자료형을 담아 줄 수 있는게 double 타입 int넣으면 소숫점 절삭
@@ -186,26 +186,26 @@ private static final Logger log = LoggerFactory.getLogger(AdminCommonService.cla
 		int lastPage = (int) Math.ceil(rowsCount/rowPerPage);
 		//Math.ceil 올림 처리
 		// 처음 번호
-        int startPageNum = 1;
+		int startPageNum = 1;
 
-        // 마지막 번호
-        int endPageNum = (lastPage < 10)? lastPage : 10;
+		// 마지막 번호
+		int endPageNum = (lastPage < 10)? lastPage : 10;
 
-  
-        if(currentPage >= 7 && lastPage > 10) {
-        	startPageNum = currentPage - 5;
-            endPageNum = currentPage + 4;
-            if(endPageNum >= lastPage) {
-            	startPageNum = lastPage - 9;
-            	endPageNum = lastPage;
-            }
-        }
-        
+
+		if(currentPage >= 7 && lastPage > 10) {
+			startPageNum = currentPage - 5;
+			endPageNum = currentPage + 4;
+			if(endPageNum >= lastPage) {
+				startPageNum = lastPage - 9;
+				endPageNum = lastPage;
+			}
+		}
+
 		Map<String,Object> paramMap = new HashMap<String,Object>();
 		paramMap.put("startIndex", startIndex);
 		paramMap.put("rowPerPage", rowPerPage);
 		log.info("paramMap:{}",paramMap);
-		
+
 
 		List<Map<String,Object>> depositStandardList = adminDepositMapper.getDepositStandardList(paramMap);
 		log.info("전체 회원 목록:{}",depositStandardList);
@@ -216,7 +216,7 @@ private static final Logger log = LoggerFactory.getLogger(AdminCommonService.cla
 		paramMap.put("depositStandardList", depositStandardList);
 		paramMap.put("startPageNum", startPageNum);
 		paramMap.put("endPageNum", endPageNum);
-		
+
 		return paramMap;
 	}
 
@@ -225,30 +225,30 @@ private static final Logger log = LoggerFactory.getLogger(AdminCommonService.cla
 	 * DepositStandard depositStandardInfo =
 	 * adminDepositMapper.getDepositStandardInfoById(); return result; }
 	 */
-	 public DepositStandard getDepositStandardInfoById(String waitingDepositStandardCode) {
-	 	DepositStandard depositStandardInfo = adminDepositMapper.getDepositStandardInfoById(waitingDepositStandardCode);
-	 	return depositStandardInfo;
-}
+	public DepositStandard getDepositStandardInfoById(String waitingDepositStandardCode) {
+		DepositStandard depositStandardInfo = adminDepositMapper.getDepositStandardInfoById(waitingDepositStandardCode);
+		return depositStandardInfo;
+	}
 
 	public void modifyDepositStandard(DepositStandard depositStandard) {
-		adminDepositMapper.modifyDepositStandard(depositStandard);	
-		
+		adminDepositMapper.modifyDepositStandard(depositStandard);
+
 	}
 	public void deleteDepositStandard(DepositStandard depositStandard) {
 		adminDepositMapper.deleteDepositStandardById(depositStandard);
-		
+
 	}
 	public void createDepositStandard(DepositStandard depositStandard) {
 		adminDepositMapper.createDepositStandardById(depositStandard);
-		
+
 	}
 
 	public Map<String, Object> isValidDepositStandard(String waitingDepositStandardCode, String adminId) {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		
+
 		boolean isValid = false;
-		
-		
+
+
 		DepositStandard depositStandard = adminDepositMapper.getDepositStandardInfoById(waitingDepositStandardCode);
 		if(depositStandard != null) {
 			String checkAdminId = depositStandard.getWaitingDepositStandardCode();
@@ -258,12 +258,12 @@ private static final Logger log = LoggerFactory.getLogger(AdminCommonService.cla
 			}
 		}
 		resultMap.put("isValid", isValid);
-		
+
 		return resultMap;
 	}
 
 	public int modifyCheck(int waitingDepositPeriod) {
 		adminDepositMapper.modifyCheck(waitingDepositPeriod);
 		return waitingDepositPeriod;
-		}
+	}
 }
