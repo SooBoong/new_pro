@@ -53,7 +53,7 @@
 		                                <span class="text-muted sr-only">생성/수정/삭제</span>
 		                              </button>	
 		                                <div class="dropdown-menu dropdown-menu-right">
-	                                <a class="dropdown-item" th:href="@{/admin/deposit/createDepositStandard(waitingDepositStandardCode=${d.waitingDepositStandardCode})}">생성</a>	    
+	                   <!--              <a class="dropdown-item" th:href="@{/admin/deposit/createDepositStandard(waitingDepositStandardCode=${d.waitingDepositStandardCode})}">생성</a>	 -->    
 	                                <a class="dropdown-item" th:href="@{/admin/deposit/modifyDepositStandard(adminId=${d.adminId})}">수정</a>	    
 	                                <a class="dropdown-item" th:href="@{/admin/deposit/deleteDepositStandard(waitingDepositStandardCode=${d.waitingDepositStandardCode})}">삭제</a>	                   
 	                              	
@@ -78,6 +78,7 @@
 									<a class="btn mb-2 btn-secondary" th:if="${currentPage<lastPage}" th:href="@{/admin/deposit/depositStandard(currentPage=${currentPage+1})}">다음</a>
 									<label class="btn mb-2 btn-secondary" th:unless="${currentPage<lastPage}">다음</label>
 									<a class="pages btn mb-2 btn-secondary" th:href=@{/admin/deposit/depositStandard(currentPage=${lastPage})}>마지막으로</a>
+										<a class="pages btn mb-2 btn-secondary" th:href="@{/admin/deposit/createDepositStandard}">생성</a>
 								</td>
 							</tr> 
 						</tfoot>

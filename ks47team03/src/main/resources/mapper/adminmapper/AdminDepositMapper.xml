@@ -18,13 +18,13 @@
 
 
 
-	<delete id="deleteDepositStanardById" parameterType="String">
+	<delete id="deleteDepositStandardById" parameterType="depositStandard">
 		/* 기준삭제 */
 		DELETE
 		FROM
 		waiting_deposit_standard
 		WHERE
-		admin_id = #{adminId};
+		admin_id = #{adminId} and waiting_deposit_standard_code= #{waitingDepositStandardCode} ;
 	</delete>
 
 
@@ -188,14 +188,9 @@
 				up_datetime = NOW()
 			</if>
 		</trim>
-
 		WHERE
 		admin_id = #{adminId}
 	</update>
-
-
-
-
 
 
 	<select id="modifyCheck" resultType="int" parameterType="int">

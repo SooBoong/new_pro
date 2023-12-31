@@ -40,7 +40,7 @@ public interface AdminDepositMapper {
 
 	public void createDepositStandardById(DepositStandard depositStandard);
 
-	public int deleteDepositStandardById(DepositStandard depositStandard);
+	public void deleteDepositStandardById(DepositStandard depositStandard);
 
 
 	public int modifyCheck(int waitingDepositPeriod);
