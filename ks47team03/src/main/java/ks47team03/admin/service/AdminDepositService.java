@@ -225,6 +225,7 @@ public class AdminDepositService {
 	 * DepositStandard depositStandardInfo =
 	 * adminDepositMapper.getDepositStandardInfoById(); return result; }
 	 */
+	
 	public DepositStandard getDepositStandardInfoById(String waitingDepositStandardCode) {
 		DepositStandard depositStandardInfo = adminDepositMapper.getDepositStandardInfoById(waitingDepositStandardCode);
 		return depositStandardInfo;
@@ -238,6 +239,7 @@ public class AdminDepositService {
 		adminDepositMapper.deleteDepositStandardById(depositStandard);
 
 	}
+	
 	public void createDepositStandard(DepositStandard depositStandard) {
 		adminDepositMapper.createDepositStandardById(depositStandard);
 

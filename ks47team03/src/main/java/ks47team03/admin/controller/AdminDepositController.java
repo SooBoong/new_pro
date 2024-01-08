@@ -151,10 +151,12 @@ public class AdminDepositController {
 										   ,Model model) {
 		String userId = (String) session.getAttribute("SID");
 		model.addAttribute("title", "보증금 기준 생성");
+		model.addAttribute("userId", userId);
 		if(msg != null) model.addAttribute("msg", msg);
 
 		return "admin/deposit/createDepositStandard";
 	}
+	
 	@PostMapping("/createDepositStandard")
     public String createDepositStandardPost(DepositStandard depositStandard) {
         depositService.createDepositStandard(depositStandard);
@@ -172,6 +174,7 @@ public class AdminDepositController {
 		return waitingDepositPeriod;
 	}
 
+	
 	//삭제 코드
 	@GetMapping("/deleteDepositStandard")
 	public String deleteDepositStandardGet(@RequestParam(value="waitingDepositStandardCode") String waitingDepositStandardCode,
@@ -184,13 +187,13 @@ public class AdminDepositController {
 		
 		return "admin/deposit/deleteDepositStandard";
 	}
+	
+	
 	@PostMapping("/deleteDepositStandard")
 	public String deleteDepositStandardPost(DepositStandard depositStandard) {
 		
 			depositService.deleteDepositStandard(depositStandard);
 			return "redirect:depositStandard";
 		}	
-
-
 
 }

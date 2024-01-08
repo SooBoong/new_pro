@@ -29,9 +29,7 @@
                     </thead>
                     <tbody>
                     <tr>
-                      <td>
-                        <input type="text" id="waitingDepositStandardCode" name="waitingDepositStandardCode" th:value="${waitingDepositStandardCode}" placeholder="코드" readonly="readonly"/>
-                      </td>
+                     
                       <td>
                         <input type="number" id="waitingDepositPeriod" name="waitingDepositPeriod" placeholder="waitingDepositPeriod"/>
                       </td>
@@ -39,7 +37,7 @@
                         <input type="text" id="setDatetime" name="setDatetime" placeholder="setDatetime" hidden="hidden"/>
                       </td>
                       <td>
-                        <input type="text" id="adminId" name="adminId" placeholder="${session.SID}" VALUE="${session.SID}"/>
+                        <input type="text" id="adminId" name="adminId" placeholder="${userId}" VALUE="${userId}"/>
                       </td>
                       <td>
                         <input type="text" id="upDatetime" name="upDatetime" placeholder="upDatetime" hidden="hidden"/>

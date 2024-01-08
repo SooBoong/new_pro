@@ -31,10 +31,9 @@
 	<insert id="createDepositStandardById" parameterType="DepositStandard">
 		/* 기준 등록 */
 		INSERT
-		  INTO waiting_deposit_standard
-		VALUES (
-				#{waitingDepositStandardCode}
-		      , #{waitingDepositPeriod}
+		  INTO waiting_deposit_standard(waiting_deposit_period, set_datetime, admin_id, up_datetime)
+		VALUES (				
+		        #{waitingDepositPeriod}
 		      , NOW()
 		      , #{adminId}
 		      , NOW()
