@@ -9,7 +9,7 @@
   	<meta charset="utf-8"/>
  	 <script src="https://js.tosspayments.com/v1/payment"></script>
  	 <script th:src="@{/js/jquery-3.7.0.js}"></script>
- 	 <
+ 
   </head>
     <section class="page-banner-area" id="category">
     <div class="container h-100">
@@ -35,7 +35,7 @@
 							<div class="col-md-12 form-group">
 								
 								<input type="text" class="form-control" id="depositName" name="depositName" placeholder="입금자명" 
-								onfocus="this.placeholder = '입금자명'" onblur="this.placeholder = '입금자명'" value="">
+								onfocus="this.placeholder = '입금자명'" onblur="this.placeholder = '입금자명'" th:value="${session.SNAME}">
 							</div>
 							<div class="col-md-12 form-group">
 								<select id="depositAmount" name="depositAmount">
@@ -68,14 +68,14 @@
     const tossPayments = TossPayments(clientKey)
 	let button = document.getElementById('payment-button')
     let button2 = document.getElementById('payment-button2') // 결제하기 버튼
-    const depositName = document.getElementById('depositName').value;
     button.addEventListener('click', function () {
+	    const depositName = document.getElementById('depositName').value;
     	const selectedAmount = document.getElementById('depositAmount').value;
         tossPayments.requestPayment('가상계좌', {
           amount: parseInt(selectedAmount),
           orderId: '2BUAd1-rnDgOilzWC3bZO',
           orderName: '보증금',
-          customerName: 'depositName',     
+          customerName: depositName,     
           successUrl: 'http://localhost/deposit/depositCheckSuccess',
           failUrl: 'http://localhost/deposit/depositCheckFail',
         })    
@@ -86,7 +86,7 @@
               amount: parseInt(selectedAmount2),
               orderId: '2BUAd1-rnDgOilzWC3bZO',
               orderName: '보증금',
-              customerName: 'depositName',           
+              customerName: depositName,           
               successUrl: 'http://localhost/deposit/depositCheckSuccess',
               failUrl: 'http://localhost/deposit/depositCheckFail',
        } )

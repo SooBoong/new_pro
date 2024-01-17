@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpSession;
+import ks47team03.admin.mapper.AdminCommonMapper;
 import ks47team03.user.service.UserDepositService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -67,11 +68,12 @@ public class UserDepositController {
 		return "user/deposit/mydeposit";
 	}
 	
+	
     @GetMapping("/mydepositPay")
     public String mydepositPay (@RequestParam (value = "currentPage", required = false, defaultValue = "1") int currentPage,
                                HttpSession session, Model model) {
       Map<String, Object> resultMap = userDepositService.getUserDepositPayList(currentPage);
-
+      String userName = (String) session.getAttribute("SNAME");
       /* 2023.12.05 최수봉
       ** 페이징 처리 */
       int lastPage = (int) resultMap.get("lastPage");
@@ -82,12 +84,13 @@ public class UserDepositController {
       log.info("userDepositPayList:{}", userDepositPayList);
 
       model.addAttribute("title", "보증금 결제");
-        model.addAttribute("currentPage", currentPage);
-        model.addAttribute("lastPage", lastPage);
-        model.addAttribute("startPageNum", startPageNum);
+      model.addAttribute("currentPage", currentPage);
+      model.addAttribute("lastPage", lastPage);
+      model.addAttribute("startPageNum", startPageNum);
       model.addAttribute("endPageNum", endPageNum);
       model.addAttribute("userDepositPayList", userDepositPayList);
-
+      model.addAttribute("userName", userName);
+      
       return "user/deposit/mydepositPay";
     }
 	
