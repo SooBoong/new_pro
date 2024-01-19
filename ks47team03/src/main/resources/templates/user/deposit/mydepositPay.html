@@ -25,20 +25,44 @@
       </div>
     </div>
   </section> 
- <section class="login_box_area section-margin">
+ <section class="order_details section-margin--small">			
 		<div class="container">
-			<div class="rowlogin">
-				<div class="login_join_center">
-					<div class="login_form_inner">
-						<h3>보증금 결제</h3>
-						<form class="row login_form" action="#/" id="contactForm" >						
-							<div class="col-md-12 form-group">
-								
-								<input type="text" class="form-control" id="depositName" name="depositName" placeholder="입금자명" 
+		<h3 class="page-title">보증금 결제</h3>
+			<div class="card my-4">
+				<div class="card-body-wizard">
+					<div class="example-basic">
+						
+						<form class="accountInsertForm" th:action="@{/deposit/mydepositPay}" method="post" >						
+									<div class="form-group">
+										<div>- 입금자명과 결제 금액을 확인해주세요..</div>
+										<div>- 결제 수단을 확인해주세요</div>										
+		                        	</div>																								
+							<div class="form-group">								
+								<label for="userName">입금자명</label>
+								<input type="text" class="form-control" id="userName" name="userName" placeholder="입금자명" 
 								onfocus="this.placeholder = '입금자명'" onblur="this.placeholder = '입금자명'" th:value="${session.SNAME}">
 							</div>
-							<div class="col-md-12 form-group">
-								<select id="depositAmount" name="depositAmount">
+							
+							<div class="form-group">
+								<label for="virtualAccount">은행</label>
+								<select id="virtualAccount" name="virtualAccount">
+											<option value="">== 은행을 선택해주세요. ==</option>
+			                          		<option value="신한은행">신한은행</option>
+			                          		<option value="우리은행">우리은행</option>
+			                          		<option value="국민은행">국민은행</option>
+			                          		<option value="토스뱅크">토스뱅크</option>
+			                          		<option value="카카오뱅크">카카오뱅크</option>
+			                          		<option value="새마을금고">새마을금고</option>
+			                          		<option value="수협" >수협</option>
+			                          		<option value="농협">농협</option>
+			                          		<option value="케이뱅크">케이뱅크</option>
+			                          		<option value="전북">전북</option>
+								</select>
+							</div>						
+							<div class="form-group">
+								<label for="virtualAccount">결제금액</label>
+								<select id="chargingAmount" name="chargingAmount">
+									<option value="">== 금액을 선택해주세요. ==</option>
 									<option value="1000">1000</option>	
 									<option value="2000">2000</option>	
 									<option value="3000">3000</option>	
@@ -53,24 +77,29 @@
 									<option value="77777777777777">77777777777777</option>	
 									<option value="10000000000000000">10000000000000000</option>	
 								</select>
-								</div>									
-						</form>
-							 <button id="payment-button">무통장결제</button>
-							 <button id="payment-button2">계좌이체</button>
+								</div>		
+								<div class="col-md-12 form-group">														
+							</div>
+							<div>										
+							 <button class="btn mb-2 btn-secondary margin-btn" type="submit" id="createVirtualAccountBtn" >무통장</button>
+							</div>
+						</form>				
+							 <label>--------------------------------------------------</label>													
+							 <button class="btn mb-2 btn-secondary margin-btn" id="payment-button">무통장결제</button>
+							 <button class="btn mb-2 btn-secondary margin-btn" id="payment-button2">계좌이체</button>
 					</div>
 				</div>
 			</div>
 		</div>
 	</section>
-    <script>
-	
+    <script>	        
     const clientKey = 'test_ck_JQbgMGZzorzx402jdj73l5E1em4d'
     const tossPayments = TossPayments(clientKey)
 	let button = document.getElementById('payment-button')
     let button2 = document.getElementById('payment-button2') // 결제하기 버튼
     button.addEventListener('click', function () {
-	    const depositName = document.getElementById('depositName').value;
-    	const selectedAmount = document.getElementById('depositAmount').value;
+	    const depositName = document.getElementById('userName').value;
+    	const selectedAmount = document.getElementById('chargingAmount').value;
         tossPayments.requestPayment('가상계좌', {
           amount: parseInt(selectedAmount),
           orderId: '2BUAd1-rnDgOilzWC3bZO',
@@ -81,7 +110,7 @@
         })    
         })    
         button2.addEventListener('click', function () {
-		const selectedAmount2 = document.getElementById('depositAmount').value;
+		const selectedAmount2 = document.getElementById('chargingAmount').value;
             tossPayments.requestPayment('계좌이체', {
               amount: parseInt(selectedAmount2),
               orderId: '2BUAd1-rnDgOilzWC3bZO',
@@ -129,5 +158,8 @@
       </div>
     </div>
   </section>
-   </th:block>
+ </th:block>
+ 
+   
+   
 </html>

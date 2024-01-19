@@ -6,11 +6,17 @@ import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpSession;
 import ks47team03.admin.mapper.AdminCommonMapper;
+import ks47team03.user.dto.Account;
+import ks47team03.user.dto.Deposit;
+import ks47team03.user.dto.Point;
+import ks47team03.user.mapper.UserDepositMapper;
 import ks47team03.user.service.UserDepositService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,13 +48,9 @@ public class UserDepositController {
 	}
 
 	@GetMapping("/mydeposit")
-	public String mydeposit(@RequestParam(value="currentPage", required = false ,defaultValue = "1")int currentPage,
-			Model model) {
-		
-		
-		
-		
-		
+	public String mydeposit(
+							@RequestParam(value="currentPage", required = false ,defaultValue = "1")int currentPage,
+							Model model) {						
 		Map<String,Object> resultMap = userDepositService.getUserDepositManageList(currentPage);
 		int lastPage = (int)resultMap.get("lastPage");
 		List<Map<String,Object>> userDepositManageList = (List<Map<String,Object>>)resultMap.get("userDepositManageList");
@@ -61,8 +63,7 @@ public class UserDepositController {
 		model.addAttribute("lastPage", lastPage);
 		model.addAttribute("userDepositManageList", userDepositManageList);
 		model.addAttribute("startPageNum", startPageNum);
-		model.addAttribute("endPageNum", endPageNum);
-		
+		model.addAttribute("endPageNum", endPageNum);		
 		model.addAttribute("title","보증금 조회");
 		
 		return "user/deposit/mydeposit";
@@ -94,12 +95,49 @@ public class UserDepositController {
       return "user/deposit/mydepositPay";
     }
 	
+    
+    @PostMapping("/mydepositPay")   
+	public String createDepositPay(Deposit depositPayHistory) {
+		userDepositService.createDepositPay(depositPayHistory);		
+		return "user/deposit/depositCheckSuccess";
+	}
+    
+    
 	@GetMapping("/mydepositRefund")
-	public String pointRefundSponsorship(Model model) {
+	public String depoistRefundSponsorship(Model model, HttpSession session) {
+		String accountName = (String) session.getAttribute("SNAME");
+		String userId = (String) session.getAttribute("SID");
+		String bankName = "notSelect";
+		String accountNum = "계좌번호를 입력해주세요.";
+		int currentHoldingDeposit = 0;
+		Account userAccount = userDepositService.getUserAccount(userId);
+		Deposit userDeposit = userDepositService.getUserDeposit(userId);
+				
+		if(userAccount != null) {			
+			bankName = userAccount.getBankName();
+			accountNum = userAccount.getAccountNumber();
+		}
 		
-		model.addAttribute("title","보증금 환급");
+		if(userDeposit !=null) currentHoldingDeposit = userDeposit.getCurrentHoldingDeposit();
 		
+		model.addAttribute("title","구구컵 : 포인트 환급 신청");
+		model.addAttribute("accountName",accountName);
+		model.addAttribute("bankName",bankName);
+		model.addAttribute("accountNum",accountNum);
+		model.addAttribute("currentHoldingDeposit",currentHoldingDeposit);
+
 		return "user/deposit/mydepositRefund";
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 }

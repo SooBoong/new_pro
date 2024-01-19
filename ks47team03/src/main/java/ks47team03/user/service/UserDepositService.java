@@ -6,7 +6,9 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import ks47team03.user.dto.Account;
 import ks47team03.user.dto.Deposit;
+import ks47team03.admin.mapper.AdminCommonMapper;
 import ks47team03.user.mapper.UserDepositMapper;
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,7 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class UserDepositService {
 
+
 private final UserDepositMapper userDepositMapper;
+
 
 public UserDepositService(UserDepositMapper userDepositMapper) {
 	this.userDepositMapper = userDepositMapper;
@@ -109,4 +113,26 @@ public Deposit getUserDeposit(String userId) {
 	Deposit userDeposit = userDepositMapper.getUserDeposit(userId);
 	return userDeposit;
 	}
+
+public Account getUserAccount(String userId) {
+	Account userAccount = userDepositMapper.getUserAccount(userId);
+	
+	return userAccount;
+}
+public Deposit getUserPoint(String userId) {
+	Deposit userDeposit = userDepositMapper.getUserDeposit(userId);
+	
+	return userDeposit;
+}
+
+public void createDepositPay(Deposit depositPayHistory) {
+	userDepositMapper.createDepositPayById(depositPayHistory);
+	
+}
+
+public String getIncreaseCode(String tableDbName) {
+	return userDepositMapper.getIncreaseCode(tableDbName);
+}
+
+
 }

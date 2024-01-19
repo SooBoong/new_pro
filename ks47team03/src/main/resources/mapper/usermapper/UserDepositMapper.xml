@@ -19,6 +19,8 @@
 		<result column="static_code" property="staticCode"/>
 		<result column="admin_id" property="adminId"/>
 		<result column="deposit_completion_datetime" property="depositCompletionDatetime"/>
+		<result column="deposit_name" property="depositName"/>
+		
 	</resultMap>
 
  
@@ -33,6 +35,8 @@
 				cast(DPRH.up_datetime AS CHAR(20)) AS upDatetime	
 		FROM
 				deposit_pay_refund_history AS DPRH
+		WHERE
+			user_id =  #{sessionId}
 				order by length(DPRH.deposit_pay_refund_history_code),DPRH.deposit_pay_refund_history_code
 		<if test="startIndex != null and startIndex > -1 ">
 			LIMIT #{startIndex},#{rowPerPage};
@@ -48,6 +52,29 @@
 		FROM
 			deposit_pay_refund_history
 	</select> 
+	
+	<insert id="createDepositPayById" parameterType="Deposit">	
+		INSERT
+		  INTO deposit_pay_histroy(user_id, charging_amount, payment_method, pay_application_datetime, waiting_deposit_standard_code, waiting_deposit_period, waiting_deposit_datetime, static_code, admin_id, deposit_completion_datetime, virtual_account)
+		VALUES (						       
+		       (SELECT
+					um.user_id
+				 FROM
+					user_manage AS um
+				WHERE
+					um.user_name =#{userName})
+		      , #{chargingAmount}
+		      , '무통장'
+		      , NOW()
+		      , 'waiting_deposit_standard_code1'
+		      , '3'
+		      , NOW()
+		      , 'deposit_sc9_1'
+		      , 'adminid001'
+		      , NOW()
+		      , #{virtualAccount}
+				)
+	</insert>
 	
  
  
@@ -68,7 +95,7 @@
 			ON
 			DPH.user_id=UM.user_id
 		 WHERE
-		    DPH.user_id= #{userId} 
+		    DPH.user_id=  #{sessionId}
 		order by length(DPH.deposit_pay_histroy),DPH.deposit_pay_histroy
 		LIMIT 1;
 
@@ -82,30 +109,6 @@
 			deposit_pay_histroy
 	</select> 
 	
-	<!-- <select id="getUserDepositPayInfoById" parameterType="String" resultMap="userDepositPayResultMap">
-		/*회원별 보증금 결제 문의*/
-		SELECT	
-			DPH.user_id AS userId,
-			UM.user_name AS userName,
-			DPH.payment_method AS paymenteMethod,
-			IFNULL(DPH.virtual_account,'') AS virtualAccount, 
-			DPH.charging_amount AS charginAmount,
-			cast(DPH.pay_application_datetime as char(20))  AS applicationDatetime,
-			cast(IFNULL(DPH.deposit_completion_datetime,'') as char(20)) AS depositCompletionDatetime
-			
-		FROM	
-			deposit_pay_histroy AS DPH
-			INNER JOIN	
-			user_manage AS UM
-			ON
-			DPH.user_id=UM.user_id
-		WHERE
-		    DPH.user_id=#{userId}
-		order by length(DPH.deposit_pay_histroy),DPH.deposit_pay_histroy
-		LIMIT 1;
-
-	</select>
- -->
 	<select id="getUserDeposit" parameterType="String">
 		/* 특정회원 보증금 조회 */
 		SELECT
@@ -122,9 +125,57 @@
 		ud.user_id = um.user_id
 		
 		WHERE
-			um.user_id= #{userId}
+			um.user_id=  #{sessionId}
 			ORDER BY up_datetime DESC
 		LIMIT 1	
 	</select>
+	
+	
+	<update id="modifyUserAccount" parameterType="Account">
+		/* 회원 계좌 수정 */
+		UPDATE
+			user_bank 
+		SET 
+			account_user_name = #{accountUserName},
+			bank_name = #{bankName},
+			account_number = #{accountNumber},
+			admin_id = 'adminid001',
+			up_datetime = CURDATE()
+		WHERE
+			user_id = #{userId}
+	</update>
+	
+	<insert id="addUserAccount" parameterType="Account">
+		/* 회원 계좌 등록 */
+		INSERT INTO user_bank 
+		VALUES(#{userBankCode},
+				#{userId},
+				#{accountUserName},
+				#{bankName},
+				#{accountNumber},
+				'adminid001',
+				CURDATE());
+	</insert>
+	
+	
+	<select id="getUserAccount" parameterType="String">
+		/* 특정 회원 계좌 조회 */
+		SELECT
+			user_bank_code,
+			user_id,
+			account_user_name,
+			bank_name,
+			account_number
+		FROM
+			user_bank
+		WHERE
+			user_id = #{sessionId}
+	</select>
+	
+	
+	
+	
+	
+	
 	
 </mapper>
