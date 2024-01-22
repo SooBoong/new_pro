@@ -14,6 +14,7 @@
 		<result column="set_datetime" 	property="setDatetime"/>
 		<result column="admin_id" 	property="adminId"/>
 		<result column="up_datetime" 	property="upDatetime"/>
+		<result column="deposit_standard_use" 	property="depositStandardUse"/>
 	</resultMap>
 
 
@@ -31,12 +32,13 @@
 	<insert id="createDepositStandardById" parameterType="DepositStandard">
 		/* 기준 등록 */
 		INSERT
-		  INTO waiting_deposit_standard(waiting_deposit_period, set_datetime, admin_id, up_datetime)
+		  INTO waiting_deposit_standard(waiting_deposit_period, set_datetime, admin_id, up_datetime, deposit_standard_use)
 		VALUES (				
 		        #{waitingDepositPeriod}
 		      , NOW()
 		      , #{adminId}
 		      , NOW()
+		      ,'N'
 				)
 	</insert>
 
@@ -83,6 +85,7 @@
 		SELECT
 		wds.waiting_deposit_standard_code AS waitingDepositStandardCode,
 		wds.waiting_deposit_period AS waitingDepositPeriod,
+		wds.deposit_standard_use AS depositStandardUse,
 		wds.set_datetime AS setDatetime,
 		wds.admin_id AS adminId,
 		wds.up_datetime AS upDatetime
@@ -167,7 +170,7 @@
 		*
 		FROM
 		waiting_deposit_standard
-		WHERE admin_id = #{adminId}
+		WHERE waiting_deposit_standard_code = #{waitingDepositStandardCode}
 	</select>
 
 	<update id="modifyDepositStandard" parameterType="depositStandard">
@@ -184,11 +187,15 @@
 				admin_id 	= #{adminId},
 			</if>
 			<if test="upDatetime != null and upDatetime != ''">
-				up_datetime = NOW()
+				up_datetime = NOW(),
+			</if>			
+			<if test="depositStandardUse != null and depositStandardUse != ''">
+				deposit_standard_use = #{depositStandardUse}
 			</if>
+			
 		</trim>
 		WHERE
-		admin_id = #{adminId}
+		waiting_deposit_standard_code = #{waitingDepositStandardCode}
 	</update>
 
 

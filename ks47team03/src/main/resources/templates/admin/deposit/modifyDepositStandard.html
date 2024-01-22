@@ -23,9 +23,10 @@
                           <tr>                         
                             <th colspan="2">입금 대기 만료 기준 코드</th>
                            	<th colspan="2">입금 대기 만료 기간(일)</th>
+                            <th colspan="2">사용 유무</th>                           
                             <th colspan="2">최초 등록일</th>
                             <th colspan="2">관리자 아이디</th>
-                            <th colspan="2">업데이트 날짜</th>                           
+                                               
                           </tr>
                         </thead>
                             <tbody th:object="${depositStandardInfo}">                        	
@@ -41,7 +42,13 @@
                                 </td>
                                 <td>
                                   <input type="number" id="waitingDepositPeriod" name="waitingDepositPeriod" th:value="*{waitingDepositPeriod}" placeholder="기간 수정"/>
-                                </td>                             
+                                </td> 
+                                <td>
+                                  <label for="depositStandardUse"></label>
+                                </td>                            
+                                 <td>					
+                                  <input type="text" id="depositStandardUse" name="depositStandardUse" th:value="*{depositStandardUse}" placeholder="'Y'or'N'"  required="required"  oninput="this.value = this.value.replace(/[^YN]/g, '');" maxlength="1"/>
+                                </td>                                                                                                                             
                                 <td>
                                   <label for="setDatetime"></label>
                                 </td>
@@ -56,10 +63,8 @@
                                 </td>                             
                                 <td>
                                   <label for="upDatetime"></label>
-                                </td>
-                                <td>
-                                  <input type="text" id="upDatetime" name="upDatetime" th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm:ss')}" placeholder="업데이트 날짜"/>
-                                </td>
+                                </td>                                                 
+                                                                                 	                            	                            	                            	                        
                               </tr>
                               <tr>
                               <td colspan="14">

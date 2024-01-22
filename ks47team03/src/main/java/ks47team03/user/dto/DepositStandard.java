@@ -9,8 +9,5 @@ public class DepositStandard {
 	private String setDatetime;
 	private String adminId;
 	private String upDatetime;
-	
-	
-	
-	
+	private String depositStandardUse;
 }

@@ -126,9 +126,9 @@ public class AdminDepositController {
 
 
 	@GetMapping("/modifyDepositStandard")
-	public String modifyDepositStandardGet(@RequestParam(value="adminId") String adminId,
+	public String modifyDepositStandardGet(@RequestParam(value="waitingDepositStandardCode") String waitingDepositStandardCode,
 										   Model model) {
-		DepositStandard depositStandardInfo = depositService.getDepositStandardInfoById(adminId);
+		DepositStandard depositStandardInfo = depositService.getDepositStandardInfoById(waitingDepositStandardCode);
 
 		model.addAttribute("title", "보증금 기준 수정");
 		model.addAttribute("depositStandardInfo", depositStandardInfo);
