@@ -111,6 +111,7 @@ public Map<String,Object> getUserDepositPayList(int currentPage) {
 }
 public Deposit getUserDeposit(String userId) {
 	Deposit userDeposit = userDepositMapper.getUserDeposit(userId);
+	
 	return userDeposit;
 	}
 

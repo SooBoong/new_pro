@@ -34,10 +34,14 @@ public class UserDepositController {
 	}
 	
 	@GetMapping("/depositCheckSuccess")
-	public String depositCheckSuccess(
+	public String depositCheckSuccess(HttpSession session, 
 			//@RequestParam(value="orderId",)
 			Model model) {
+		String userId = (String) session.getAttribute("SID");
+
+		Deposit userDeposit = userDepositService.getUserDeposit(userId);
 		model.addAttribute("title","결제 성공");
+		model.addAttribute("userId", userId);
 		return "user/deposit/depositCheckSuccess";
 	}
 	
@@ -75,12 +79,10 @@ public class UserDepositController {
                                HttpSession session, Model model) {
       Map<String, Object> resultMap = userDepositService.getUserDepositPayList(currentPage);
       String userName = (String) session.getAttribute("SNAME");
-      /* 2023.12.05 최수봉
-      ** 페이징 처리 */
       int lastPage = (int) resultMap.get("lastPage");
       int startPageNum = (int) resultMap.get("startPageNum");
       int endPageNum = (int) resultMap.get("endPageNum");
-
+      
       List<Map<String, Object>> userDepositPayList = (List<Map<String, Object>>) resultMap.get("userDepositPayList");
       log.info("userDepositPayList:{}", userDepositPayList);
 
@@ -110,7 +112,9 @@ public class UserDepositController {
 		String bankName = "notSelect";
 		String accountNum = "계좌번호를 입력해주세요.";
 		int currentHoldingDeposit = 0;
+		
 		Account userAccount = userDepositService.getUserAccount(userId);
+		
 		Deposit userDeposit = userDepositService.getUserDeposit(userId);
 				
 		if(userAccount != null) {			

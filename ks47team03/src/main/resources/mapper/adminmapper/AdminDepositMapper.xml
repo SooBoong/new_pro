@@ -18,6 +18,20 @@
 	</resultMap>
 
 
+<select id="depositStandardUseCheck" resultType="boolean" parameterType="String">
+		/* 아이디 중복체크 */
+		SELECT 
+			IF(COUNT(wds.deposit_standard_use) > 0, 1, 0)
+		FROM
+			waiting_deposit_standard AS wds
+		WHERE 
+			wds.deposit_standard_use = #{deposit_standard_use};
+	</select>
+
+
+
+
+
 
 	<delete id="deleteDepositStandardById" parameterType="depositStandard">
 		/* 기준삭제 */
@@ -96,6 +110,7 @@
 			LIMIT #{startIndex},#{rowPerPage};
 		</if>
 	</select>
+	
 	<select id="getDepositStandardListCount" resultType="int">
 		/* 기준 행 계산*/
 		SELECT
@@ -206,6 +221,6 @@
 		FROM
 		waiting_deposit_standard as wds
 		WHERE
-		wds.waiting_deposit_period = #{waitingDepositPeriod};
+		wds.deposit_standard_use = 'Y'
 	</select>
 </mapper>

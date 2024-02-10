@@ -7,9 +7,9 @@
  <!-- ================ start banner area ================= -->
   <head>
   	<meta charset="utf-8"/>
+ 	<script th:src="@{/user/js/jquery-3.7.0.js}"></script>
  	 <script src="https://js.tosspayments.com/v1/payment"></script>
- 	 <script th:src="@{/js/jquery-3.7.0.js}"></script>
- 
+ 	 
   </head>
     <section class="page-banner-area" id="category">
     <div class="container h-100">
@@ -32,7 +32,7 @@
 				<div class="card-body-wizard">
 					<div class="example-basic">
 						
-						<form class="accountInsertForm" th:action="@{/deposit/mydepositPay}" method="post" >						
+						<form id="accountInsertForm" class="accountInsertForm" th:action="@{/deposit/mydepositPay}"  method="post" >						
 									<div class="form-group">
 										<div>- 입금자명과 결제 금액을 확인해주세요..</div>
 										<div>- 결제 수단을 확인해주세요</div>										
@@ -44,8 +44,8 @@
 							</div>
 							
 							<div class="form-group">
-								<label for="virtualAccount">은행</label>
-								<select id="virtualAccount" name="virtualAccount">
+								<label for="virtualAccountLabel">은행</label>
+								<select id="virtualAccount" name="virtualAccount" >
 											<option value="">== 은행을 선택해주세요. ==</option>
 			                          		<option value="신한은행">신한은행</option>
 			                          		<option value="우리은행">우리은행</option>
@@ -60,8 +60,8 @@
 								</select>
 							</div>						
 							<div class="form-group">
-								<label for="virtualAccount">결제금액</label>
-								<select id="chargingAmount" name="chargingAmount">
+								<label for="chargingAmountLabel">결제금액</label>
+								<select id="chargingAmount" name="chargingAmount" >
 									<option value="">== 금액을 선택해주세요. ==</option>
 									<option value="1000">1000</option>	
 									<option value="2000">2000</option>	
@@ -84,7 +84,8 @@
 							 <button class="btn mb-2 btn-secondary margin-btn" type="submit" id="createVirtualAccountBtn" >무통장</button>
 							</div>
 						</form>				
-							 <label>--------------------------------------------------</label>													
+							 <label>--------------------------------------------------</label>
+							 <p></p>													
 							 <button class="btn mb-2 btn-secondary margin-btn" id="payment-button">무통장결제</button>
 							 <button class="btn mb-2 btn-secondary margin-btn" id="payment-button2">계좌이체</button>
 					</div>
@@ -92,7 +93,9 @@
 			</div>
 		</div>
 	</section>
-    <script>	        
+    
+<script>	        
+    
     const clientKey = 'test_ck_JQbgMGZzorzx402jdj73l5E1em4d'
     const tossPayments = TossPayments(clientKey)
 	let button = document.getElementById('payment-button')
@@ -119,10 +122,54 @@
               successUrl: 'http://localhost/deposit/depositCheckSuccess',
               failUrl: 'http://localhost/deposit/depositCheckFail',
        } )
-      })  
-      	
-    </script>
-    
+      });
+  
+    /*     
+  	  $('#accountInsertForm').on('submit', function(e) {
+  		console.log('ff')
+  		 e.preventDefault();
+  	  let virtualAccountVal = $('virtualAccount').val();
+  	  let chargingAmountVal = $('chargingAmount').val();
+  	 
+  	  if(virtualAccountVal == ''){    		 
+  		  alert('은행 필수항목을 선택하세요'); 
+  		console.log('ss')
+ 			  return false;
+  	  }
+  	  
+  	  if(chargingAmountVal == ''){
+  		  alert('금액 필수항목을 선택하세요');
+  		console.log('dd')
+ 			  return false;
+  	  }       
+  	 }); 
+  	  
+  	   */
+  	  
+  	 $(document).ready(function () {
+         $('#accountInsertForm').on('submit', function (e) {
+
+             let virtualAccountVal = $('#virtualAccount').val();
+             let chargingAmountVal = $('#chargingAmount').val();
+
+             if (virtualAccountVal === '') {
+                 alert('은행 필수항목을 선택하세요');
+                 
+                 return false;
+             }
+
+             if (chargingAmountVal === '') {
+                 alert('금액 필수항목을 선택하세요');
+                 return false;
+             }
+         /*     return true; */
+             
+         });
+     });
+     
+
+</script>
+
    <section class="order_details section-margin--small">
     <div class="container">    
       <div class="order_details_table">
@@ -159,7 +206,4 @@
     </div>
   </section>
  </th:block>
- 
-   
-   
 </html>

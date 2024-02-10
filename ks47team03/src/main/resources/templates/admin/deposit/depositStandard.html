@@ -8,7 +8,7 @@
      <div class="container-fluid">
        <div class="row justify-content-center">
           <div class="col-12">
-            <h2 class="mb-2 page-title">보증금 기준 조회</h2>
+            <h2 class="mb-2 page-title">보증금 입금 대기 만료 기간</h2>
              <p class="card-text"></p>
               <div class="row my-4">
                 <!-- Small table -->
@@ -80,7 +80,7 @@
 									<a class="btn mb-2 btn-secondary" th:if="${currentPage<lastPage}" th:href="@{/admin/deposit/depositStandard(currentPage=${currentPage+1})}">다음</a>
 									<label class="btn mb-2 btn-secondary" th:unless="${currentPage<lastPage}">다음</label>
 									<a class="pages btn mb-2 btn-secondary" th:href=@{/admin/deposit/depositStandard(currentPage=${lastPage})}>마지막으로</a>
-										<a class="pages btn mb-2 btn-secondary" th:href="@{/admin/deposit/createDepositStandard}">생성</a>
+									<a class="pages btn mb-2 btn-secondary" th:href="@{/admin/deposit/createDepositStandard}">생성</a>
 								</td>
 							</tr> 
 						</tfoot>
@@ -95,14 +95,14 @@
 	</th:block>
 	<th:block layout:fragment="customJs">
 		<script>		
-			$(function(){
+		$(function(){
 		      $('#dataTable-1').DataTable({
 			         autoWidth: true,			      
 			         "lengthChange": false, 
-              		    "pageLength" : 10,
-                		  "searching" : false,
-               		   "info": false,
-                  "paging" :false, 
+            		    "pageLength" : 10,
+              		  "searching" : false,
+             		   "info": false,
+                "paging" :false, 
 			        columnDefs: [{
 			            targets: 0,
 			            searchable: false,

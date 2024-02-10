@@ -191,7 +191,6 @@ public class AdminDepositService {
 		// 마지막 번호
 		int endPageNum = (lastPage < 10)? lastPage : 10;
 
-
 		if(currentPage >= 7 && lastPage > 10) {
 			startPageNum = currentPage - 5;
 			endPageNum = currentPage + 4;
@@ -200,16 +199,12 @@ public class AdminDepositService {
 				endPageNum = lastPage;
 			}
 		}
-
 		Map<String,Object> paramMap = new HashMap<String,Object>();
 		paramMap.put("startIndex", startIndex);
 		paramMap.put("rowPerPage", rowPerPage);
 		log.info("paramMap:{}",paramMap);
-
-
 		List<Map<String,Object>> depositStandardList = adminDepositMapper.getDepositStandardList(paramMap);
 		log.info("전체 회원 목록:{}",depositStandardList);
-
 		//controller에 전달
 		paramMap.clear(); // map 객체 안의 data초기화
 		paramMap.put("lastPage", lastPage);
@@ -220,6 +215,9 @@ public class AdminDepositService {
 		return paramMap;
 	}
 
+	
+	
+	
 	/*
 	 * public int modifyDeopositStandard(DepositStandard depositStandard) {
 	 * DepositStandard depositStandardInfo =
@@ -268,4 +266,12 @@ public class AdminDepositService {
 		adminDepositMapper.modifyCheck(waitingDepositPeriod);
 		return waitingDepositPeriod;
 	}
+	
+	public boolean depositStandardUseCheck(String depositStandardUse) {
+		return false;
+		
+	}
+	
+	
+	
 }

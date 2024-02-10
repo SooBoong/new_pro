@@ -37,13 +37,17 @@ public interface AdminDepositMapper {
 	public DepositStandard getDepositStandardInfoById(String waitingDepositStandardCode);
 	public int modifyDepositStandard(DepositStandard depositStandard);
 
-
+	//보증금 기준 생성
 	public void createDepositStandardById(DepositStandard depositStandard);
-
+	
+	//보증금 기준 삭제
 	public void deleteDepositStandardById(DepositStandard depositStandard);
 
-
+	//수정전 선택한 보증금 기준 
 	public int modifyCheck(int waitingDepositPeriod);
+	
+	//중복확인(미완)
+	public boolean depositStandardUseCheck(String depositStandardUse);
 
 
 }

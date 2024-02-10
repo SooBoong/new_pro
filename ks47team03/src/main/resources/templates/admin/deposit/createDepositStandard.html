@@ -11,8 +11,7 @@
 <th:block layout:fragment="customContents">
   <div class="row justify-content-center">
     <div class="col-12">
-      <h2 class="mb-2 page-title">보증금 관련 기준 생성</h2>
-      <p class="card-text">기준 생성</p>
+      <h2 class="mb-2 page-title">입금 대기 만료 기준 생성</h2>    
       <div class="row my-4">
         <!-- Small table -->
         <div class="col-md-12">
@@ -24,20 +23,19 @@
                   <table class="table datables table-hover">
                     <thead>
                     <tr>
-                      <th colspan="5">생성</th>
+                      <th colspan="5">입금 대기 만료 기준 생성</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                     
+                    <tr>                     
                       <td>
-                        <input type="number" id="waitingDepositPeriod" name="waitingDepositPeriod" placeholder="waitingDepositPeriod"/>
+                        <input type="number" id="waitingDepositPeriod" name="waitingDepositPeriod" placeholder="waitingDepositPeriod" min="1"/>
                       </td>
                       <td>
                         <input type="text" id="setDatetime" name="setDatetime" placeholder="setDatetime" hidden="hidden"/>
                       </td>
                       <td>
-                        <input type="text" id="adminId" name="adminId" placeholder="adminId" th:value="${userId}"/>
+                        <input type="text" id="adminId" name="adminId" placeholder="adminId" th:value="${userId}" readonly/>
                       </td>
                       <td>
                         <input type="text" id="upDatetime" name="upDatetime" placeholder="upDatetime" hidden="hidden"/>
@@ -45,8 +43,8 @@
                     </tr>
                     <tr>
                       <td colspan="10">
-                        <button type="submit"id="createDepositStandardBtn">생성</button>
-                        <button type="reset" id="resetBtn">입력취소</button>
+                        <button class="pages btn mb-2 btn-secondary" type="submit"id="createDepositStandardBtn">생성</button>
+                        <button class="pages btn mb-2 btn-secondary" type="reset" id="resetBtn">입력취소</button>
                       </td>
                     </tr>
                     </tbody>
@@ -59,7 +57,19 @@
       </div>
     </div>
   </div>
+  <script>
+	document.getElementById("createDepositStandardForm").addEventListener("submit", function(event) {     
+    let waitingDepositPeriodValue = document.getElementById("waitingDepositPeriod").value.trim();
+    
+    if (waitingDepositPeriodValue == "" || waitingDepositPeriodValue == null) {     
+		event.preventDefault();
+        alert("값을 입력해주세요");
+        return false;
+    }        
+   });
+ </script>
+  
+  
 </th:block>
-
 
 </html>
