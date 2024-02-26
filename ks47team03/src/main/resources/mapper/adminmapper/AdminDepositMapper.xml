@@ -37,9 +37,16 @@
 		/* 기준삭제 */
 		DELETE
 		FROM
-		waiting_deposit_standard
+			waiting_deposit_standard
 		WHERE
-		admin_id = #{adminId} and waiting_deposit_standard_code= #{waitingDepositStandardCode} ;
+			waiting_deposit_standard_code= #{waitingDepositStandardCode} and admin_id =
+		(	
+				select
+					um.user_id
+				FROM
+					user_manage  AS um
+				WHERE 
+					um.user_id=#{adminId} and um.user_pw=#{adminPw});		
 	</delete>
 
 

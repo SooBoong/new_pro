@@ -26,21 +26,15 @@ public class AdminDepositService {
 	//회원 보증금 환급 부분
 	public Map<String,Object> getDepositRefundList(int currentPage) {
 		int rowPerPage = 16;
-
 		//페이지 계산(시작될 행의 인덱스)
 		int startIndex = (currentPage-1)*rowPerPage;
-
 		double rowsCount = adminDepositMapper.getDepositRefundListCount();
-
 		int lastPage = (int) Math.ceil(rowsCount/rowPerPage);
 		//Math.ceil 올림 처리
 		// 처음 번호
 		int startPageNum = 1;
-
 		// 마지막 번호
 		int endPageNum = (lastPage < 10)? lastPage : 10;
-
-
 		if(currentPage >= 7 && lastPage > 10) {
 			startPageNum = currentPage - 5;
 			endPageNum = currentPage + 4;
@@ -49,7 +43,6 @@ public class AdminDepositService {
 				endPageNum = lastPage;
 			}
 		}
-
 		Map<String,Object> paramMap = new HashMap<String,Object>();
 		paramMap.put("startIndex", startIndex);
 		paramMap.put("rowPerPage", rowPerPage);

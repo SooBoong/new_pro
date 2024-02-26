@@ -46,8 +46,8 @@
                                   <label for="depositStandardUse"></label>
                                 </td>                            
                                  <td>					
-                                  <input type="text" id="depositStandardUse" name="depositStandardUse" th:value="*{depositStandardUse}" placeholder="'Y'or'N'"  
-                                  required="required"  oninput="this.value = this.value.replace(/[^YN]/g, '');" maxlength="1"/>
+                                  <input type="text" id="depositStandardUse" name="depositStandardUse" th:value="*{depositStandardUse}" 
+                                   placeholder="'Y'or'N'" required="required"  oninput="this.value = this.value.replace(/[^YN]/g, '');" maxlength="1"/>
                                 </td>                                                                                                                             
                                 <td>
                                   <label for="setDatetime"></label>
@@ -65,7 +65,7 @@
                               </tr>
                               <tr>
                               <td colspan="14">
-			                     <button class="pages btn mb-2 btn-secondary" type="submit" id=":modifyDepositStandardBtn" >수정</button>
+			                     <button class="pages btn mb-2 btn-secondary" type="submit" id="modifyDepositStandardBtn" >수정</button>
                            		<button class="pages btn mb-2 btn-secondary" type="reset" >취소</button>
                             	</td>
                             	</tr>
@@ -107,7 +107,7 @@
 			})
 				
 				
-    /* 현재 기준 선택 ajax  */	
+           /* 선택한 기준 수정전 값 ajax  */	
 			$(document).ready(function() {
 				let formData = {
     				'waitingDepositPeriod': $('#waitingDepositPeriod').val()}

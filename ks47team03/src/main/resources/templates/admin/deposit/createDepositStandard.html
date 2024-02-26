@@ -59,7 +59,7 @@
   </div>
   <script>
 	document.getElementById("createDepositStandardForm").addEventListener("submit", function(event) {     
-    let waitingDepositPeriodValue = document.getElementById("waitingDepositPeriod").value.trim();
+    let waitingDepositPeriodValue = document.getElementById("waitingDepositPeriod").value;
     
     if (waitingDepositPeriodValue == "" || waitingDepositPeriodValue == null) {     
 		event.preventDefault();

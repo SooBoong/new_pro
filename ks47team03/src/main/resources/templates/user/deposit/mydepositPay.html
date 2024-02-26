@@ -34,7 +34,7 @@
 						
 						<form id="accountInsertForm" class="accountInsertForm" th:action="@{/deposit/mydepositPay}"  method="post" >						
 									<div class="form-group">
-										<div>- 입금자명과 결제 금액을 확인해주세요..</div>
+								l		<div>- 입금자명과 결제 금액을 확인해주세요..</div>
 										<div>- 결제 수단을 확인해주세요</div>										
 		                        	</div>																								
 							<div class="form-group">								
@@ -47,11 +47,11 @@
 								<label for="virtualAccountLabel">은행</label>
 								<select id="virtualAccount" name="virtualAccount" >
 											<option value="">== 은행을 선택해주세요. ==</option>
-			                          		<option value="신한은행">신한은행</option>
-			                          		<option value="우리은행">우리은행</option>
-			                          		<option value="국민은행">국민은행</option>
-			                          		<option value="토스뱅크">토스뱅크</option>
-			                          		<option value="카카오뱅크">카카오뱅크</option>
+			                          		<option value="신한">신한은행</option>
+			                          		<option value="우리">우리은행</option>
+			                          		<option value="국민">국민은행</option>
+			                          		<option value="토스">토스뱅크</option>
+			                          		<option value="카카오">카카오뱅크</option>
 			                          		<option value="새마을금고">새마을금고</option>
 			                          		<option value="수협" >수협</option>
 			                          		<option value="농협">농협</option>
@@ -94,12 +94,13 @@
 		</div>
 	</section>
     
-<script>	        
-    
+<script>	            
     const clientKey = 'test_ck_JQbgMGZzorzx402jdj73l5E1em4d'
     const tossPayments = TossPayments(clientKey)
-	let button = document.getElementById('payment-button')
+	
+    let button = document.getElementById('payment-button')
     let button2 = document.getElementById('payment-button2') // 결제하기 버튼
+   
     button.addEventListener('click', function () {
 	    const depositName = document.getElementById('userName').value;
     	const selectedAmount = document.getElementById('chargingAmount').value;
@@ -108,7 +109,7 @@
           orderId: '2BUAd1-rnDgOilzWC3bZO',
           orderName: '보증금',
           customerName: depositName,     
-          successUrl: 'http://localhost/deposit/depositCheckSuccess',
+          successUrl: 'http://localhost/deposit/success',
           failUrl: 'http://localhost/deposit/depositCheckFail',
         })    
         })    
@@ -119,8 +120,8 @@
               orderId: '2BUAd1-rnDgOilzWC3bZO',
               orderName: '보증금',
               customerName: depositName,           
-              successUrl: 'http://localhost/deposit/depositCheckSuccess',
-              failUrl: 'http://localhost/deposit/depositCheckFail',
+              successUrl: "http://localhost/deposit/success",
+              failUrl: window.location.origin + "/fail",
        } )
       });
   

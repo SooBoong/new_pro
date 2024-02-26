@@ -10,4 +10,5 @@ public class DepositStandard {
 	private String adminId;
 	private String upDatetime;
 	private String depositStandardUse;
+	private String adminPw;
 }

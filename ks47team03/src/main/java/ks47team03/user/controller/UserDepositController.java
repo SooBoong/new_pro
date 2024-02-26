@@ -54,14 +54,18 @@ public class UserDepositController {
 	@GetMapping("/mydeposit")
 	public String mydeposit(
 							@RequestParam(value="currentPage", required = false ,defaultValue = "1")int currentPage,
+							HttpSession session,
 							Model model) {						
+		String userId = (String) session.getAttribute("SID");
+
 		Map<String,Object> resultMap = userDepositService.getUserDepositManageList(currentPage);
 		int lastPage = (int)resultMap.get("lastPage");
-		List<Map<String,Object>> userDepositManageList = (List<Map<String,Object>>)resultMap.get("userDepositManageList");
-		log.info("userDepositManageList:{}",userDepositManageList);
-		model.addAttribute("title","회원 보증금 관리");
+		List<Map<String,Object>> userDepositManageList = (List<Map<String,Object>>)resultMap.get("userDepositManageList");		
 		int startPageNum = (int) resultMap.get("startPageNum");
 		int endPageNum = (int) resultMap.get("endPageNum");
+		
+		
+		
 		model.addAttribute("title","회원 보증금 관리");
 		model.addAttribute("currentPage", currentPage);
 		model.addAttribute("lastPage", lastPage);
@@ -69,6 +73,7 @@ public class UserDepositController {
 		model.addAttribute("startPageNum", startPageNum);
 		model.addAttribute("endPageNum", endPageNum);		
 		model.addAttribute("title","보증금 조회");
+		model.addAttribute("userId", userId);
 		
 		return "user/deposit/mydeposit";
 	}
