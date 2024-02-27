@@ -23,9 +23,43 @@
 		
 	</resultMap>
 
+
+	<select id="getUserDepositPaySuccessList" parameterType="String" >
+	/* 결제성공 표시 */
+	SELECT
+		um.user_name AS userName,
+		dph.payment_method AS paymentMethod,
+		dph.charging_amount AS charginAmount,
+		IFNULL(va.virtual_account_name,0) AS virualAccountName,
+		IFNULL(va.virtual_account_number,0) AS virualAccountNumber,
+		IFNULL(dph.waiting_deposit_datetime, 0) AS waitingDepositDatetime
+	FROM
+		deposit_pay_histroy AS dph
+		LEFT join
+		virtual_account AS va
+		ON
+		dph.virtual_account = va.virtual_account_name
+		LEFT JOIN 
+		user_manage AS um
+		on
+		dph.user_id = um.user_id
+	WHERE
+		dph.user_id = #{userId}
+	ORDER BY dph.pay_application_datetime DESC
+	LIMIT 1;
+
+	
+	</select>
+
+	
+
+
+
+
+
  
   <select id="getUserDepositManageList" parameterType="map" resultType="map">
-		/* 회원 보증금 관리 조회 */
+		/* 특정 회원 보증금 관리 조회 */
 		SELECT
 			um.user_name AS userName,
 			dsrh.past_holding_deposit AS pastHoldingDeposit,
@@ -84,7 +118,7 @@
 	
  
  
- <select id="getUserDepositPayList" parameterType="String" resultMap="userDepositPayResultMap">
+ <select id="getUserDepositPayList" parameterType="map" resultType="map">
 		/* 결제 보증금 */
 		SELECT	
 			DPH.user_id AS userId,
@@ -101,7 +135,7 @@
 			ON
 			DPH.user_id=UM.user_id
 		 WHERE
-		    DPH.user_id=  #{sessionId}
+		    DPH.user_id=  #{userId}
 		order by length(DPH.deposit_pay_histroy),DPH.deposit_pay_histroy
 		LIMIT 1;
 
@@ -131,7 +165,7 @@
 		ud.user_id = um.user_id
 		
 		WHERE
-			um.user_id=  #{sessionId}
+			um.user_id=  #{userId}
 			ORDER BY up_datetime DESC
 		LIMIT 1	
 	</select>

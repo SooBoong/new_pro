@@ -32,25 +32,31 @@ public class UserDepositController {
 	public UserDepositController(UserDepositService userDepositService) {
 		this.userDepositService = userDepositService;
 	}
+	//일반 결제 성공 페이지
 	
 	@GetMapping("/depositCheckSuccess")
-	public String depositCheckSuccess(HttpSession session, 
-			//@RequestParam(value="orderId",)
-			Model model) {
+	public String depositCheckSuccess(HttpSession session,		
+										Model model) {
 		String userId = (String) session.getAttribute("SID");
 
-		Deposit userDeposit = userDepositService.getUserDeposit(userId);
+		List<Map<String, Object>> depositPaySuccessList = userDepositService.getUserDepositPaySuccessList(userId);
+		 log.info("depositPaySuccessList:{}", depositPaySuccessList);
 		model.addAttribute("title","결제 성공");
 		model.addAttribute("userId", userId);
+		model.addAttribute("depositPaySuccessList", depositPaySuccessList);
 		return "user/deposit/depositCheckSuccess";
+		
+		
+		
+		
+		
 	}
-	
 	@GetMapping("/depositCheckFail")
 	public String depositCheckfail(Model model) {
 		model.addAttribute("title","결제 실패");
 		return "user/deposit/depositCheckFail";
 	}
-
+	//내 보증금 조회
 	@GetMapping("/mydeposit")
 	public String mydeposit(
 							@RequestParam(value="currentPage", required = false ,defaultValue = "1")int currentPage,
@@ -78,11 +84,12 @@ public class UserDepositController {
 		return "user/deposit/mydeposit";
 	}
 	
-	
+	//내 보증금 결제
     @GetMapping("/mydepositPay")
     public String mydepositPay (@RequestParam (value = "currentPage", required = false, defaultValue = "1") int currentPage,
                                HttpSession session, Model model) {
-      Map<String, Object> resultMap = userDepositService.getUserDepositPayList(currentPage);
+     String userId = (String) session.getAttribute("SID");
+      Map<String, Object> resultMap = userDepositService.getUserDepositPayList(userId, currentPage);
       String userName = (String) session.getAttribute("SNAME");
       int lastPage = (int) resultMap.get("lastPage");
       int startPageNum = (int) resultMap.get("startPageNum");
@@ -102,14 +109,16 @@ public class UserDepositController {
       return "user/deposit/mydepositPay";
     }
 	
-    
+    //보증금 결제1
     @PostMapping("/mydepositPay")   
 	public String createDepositPay(Deposit depositPayHistory) {
 		userDepositService.createDepositPay(depositPayHistory);		
-		return "user/deposit/depositCheckSuccess";
+		return "redirect:depositCheckSuccess";
 	}
     
     
+    
+    //보증금 환
 	@GetMapping("/mydepositRefund")
 	public String depoistRefundSponsorship(Model model, HttpSession session) {
 		String accountName = (String) session.getAttribute("SNAME");

@@ -48,12 +48,12 @@
                </tr>
            </th:block>
            	<tr th:if="${#lists.isEmpty(userDepositManageList)}">
-				<td class="table-center" colspan="6">내역이 존재하지 않습니다.</td>
+				<td class="table-center" colspan="6"> 내역이 존재하지 않습니다.</td>
 			</tr>
             </tbody>
                          <tfoot>                  
 						 <tr>
-							<td colspan="5">
+							<td colspan="6">
 								<a class="pages btn mb-2 btn-secondary" th:href="@{/deposit/mydeposit}">처음으로</a>
 								<a class="btn mb-2 btn-secondary" th:if="${currentPage>1}" th:href="@{/deposit/mydeposit(currentPage=${currentPage-1})}">이전</a>
 								<label class="btn mb-2 btn-secondary" th:unless="${currentPage>1}">이전</label>

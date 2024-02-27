@@ -8,12 +8,12 @@
   <section class="page-banner-area" id="category">
     <div class="container h-100">
         <div class="text-center">
-          <h1>나의 보증금 조회</h1>
+          <h1>보증금 결제 성공</h1>
           <nav aria-label="breadcrumb" class="banner-breadcrumb">
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="/"><span class="fe fe-16 fe-home"></span></a></li>
               <li class="breadcrumb-item"><span class="fe fe-16 fe-chevron-right"></span></li>
-              <li class="breadcrumb-item active" aria-current="page">나의 보증금 조회</li>
+              <li class="breadcrumb-item active" aria-current="page">보증금 결제 성공</li>
             </ol>
           </nav>
       </div>
@@ -21,21 +21,37 @@
   </section> 
    <section class="order_details section-margin--small">
     <div class="container">   
-      <div class="order_details_table">
-        <h2>보증금 조회</h2>
+      <div class="order_details_table">      
         <div class="table-responsive">
           <table class="table">
             <thead>
               <tr>
                 <th scope="col">이름</th>
-                <th scope="col">과거보증금</th>
-                <th scope="col">보증금 사용 유형</th>
-                <th scope="col">현 보증금</th>
-                <th scope="col">최종변동날짜</th>
+                <th scope="col">결제 방법</th>
+                <th scope="col">결제 금액</th>
+                <th scope="col">가상 계좌</th>
+                <th scope="col">가상 계좌 번호</th>
+                <th scope="col">입금 만료 기간</th>
               </tr>
             </thead>
           <tbody>
+          	<th:block th:unless="${#lists.isEmpty(depositPaySuccessList)}"
+                     th:each="um, state : ${depositPaySuccessList}">
+               <tr class="table-center">
+                   <td th:text="${um.userName}"></td>
+                   <td th:text="${um.paymentMethod}"></td>
+                   <td th:text="${um.charginAmount}"></td>
+                   <td th:text="${um.virualAccountName}"></td>
+                   <td th:text="${um.virualAccountNumber}"></td>
+                   <td th:text="${um.waitingDepositDatetime}"></td>
+               </tr>
+           </th:block>
           </tbody>
+          <tfoot>  
+           	<td colspan="6" class="text-center">
+                <a class="pages btn mb-2 btn-secondary" th:href="@{/deposit/mydeposit}">확인</a>
+            </td>        		          		
+          </tfoot>
           </table>
         </div>
       </div>

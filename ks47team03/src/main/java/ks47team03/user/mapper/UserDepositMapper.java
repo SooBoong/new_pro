@@ -26,6 +26,8 @@ public interface UserDepositMapper {
 	public void createDepositPayById(Deposit depositPayHistory);
 	public String getIncreaseCode(String tableDbName);
 	
+	public List<Map<String, Object>> getUserDepositPaySuccessList(String userId);
+	
 	
 	
 	

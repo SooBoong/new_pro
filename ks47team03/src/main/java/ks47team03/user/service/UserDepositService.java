@@ -71,7 +71,7 @@ public Map<String,Object> getUserDepositManageList(String userId, int currentPag
 	return paramMap;
 }
 
-public Map<String,Object> getUserDepositPayList(int currentPage) {
+public Map<String,Object> getUserDepositPayList(String userId, int currentPage) {
 	int rowPerPage = 16;
 	
 	//페이지 계산(시작될 행의 인덱스)
@@ -99,6 +99,7 @@ public Map<String,Object> getUserDepositPayList(int currentPage) {
 	Map<String,Object> paramMap = new HashMap<String,Object>();
 	paramMap.put("startIndex", startIndex);
 	paramMap.put("rowPerPage", rowPerPage);
+	paramMap.put("userId", userId);
 	log.info("paramMap:{}",paramMap);
 	
 	List<Map<String,Object>> userDepositPayList = userDepositMapper.getUserDepositPayList(paramMap);
@@ -111,6 +112,7 @@ public Map<String,Object> getUserDepositPayList(int currentPage) {
 	paramMap.put("endPageNum", endPageNum);
 	return paramMap;
 }
+
 
 public Deposit getUserDeposit(String userId) {
 	Deposit userDeposit = userDepositMapper.getUserDeposit(userId);
@@ -136,6 +138,11 @@ public void createDepositPay(Deposit depositPayHistory) {
 
 public String getIncreaseCode(String tableDbName) {
 	return userDepositMapper.getIncreaseCode(tableDbName);
+}
+
+public List<Map<String, Object>> getUserDepositPaySuccessList(String userId) {
+	 List<Map<String,Object>> userDepositPaySuccessList = userDepositMapper.getUserDepositPaySuccessList(userId);
+	return userDepositPaySuccessList;
 }
 
 
