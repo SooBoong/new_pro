@@ -27,17 +27,21 @@
   <select id="getUserDepositManageList" parameterType="map" resultType="map">
 		/* 회원 보증금 관리 조회 */
 		SELECT
-				DPRH.user_id AS userId,
-				DPRH.past_holding_deposit AS pastHoldingDeposit,
-				DPRH.deposit_using_type AS depositUsingType,
-				DPRH.deposit_pay_use_history AS depositPayUseHistory,
-				DPRH.current_holding_deposit AS currentHoldingDeposit,
-				cast(DPRH.up_datetime AS CHAR(20)) AS upDatetime	
+			um.user_name AS userName,
+			dsrh.past_holding_deposit AS pastHoldingDeposit,
+			dsrh.deposit_using_type AS depositUsingType,
+			dsrh.deposit_pay_use_history depositPayUseHistory,
+			dsrh.current_holding_deposit AS currentHoldingDeposit,
+			IFNULL(dsrh.up_datetime, 0) AS upDatetime
 		FROM
-				deposit_pay_refund_history AS DPRH
-		WHERE
-			user_id =  #{sessionId}
-				order by length(DPRH.deposit_pay_refund_history_code),DPRH.deposit_pay_refund_history_code
+			deposit_pay_refund_history AS dsrh
+			INNER JOIN
+			user_manage AS um
+			ON
+			dsrh.user_id = um.user_id
+		where
+			dsrh.user_id =#{userId}
+			order by dsrh.up_datetime desc
 		<if test="startIndex != null and startIndex > -1 ">
 			LIMIT #{startIndex},#{rowPerPage};
 		</if>
@@ -46,11 +50,13 @@
 
 
 	<select id="getUserDepositManageListCount" resultType="int">
-		/* 기준 행 계산*/
+		/* 특정 행 기준 계산*/
 		SELECT
 			COUNT(*)
 		FROM
 			deposit_pay_refund_history
+		WHERE
+			user_id= #{userId}
 	</select> 
 	
 	<insert id="createDepositPayById" parameterType="Deposit">	

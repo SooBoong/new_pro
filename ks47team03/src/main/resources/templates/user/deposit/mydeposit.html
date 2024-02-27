@@ -30,21 +30,27 @@
                 <th scope="col">이름</th>
                 <th scope="col">과거보증금</th>
                 <th scope="col">보증금 사용 유형</th>
+                <th scope="col">보증금 사용 금액</th>
                 <th scope="col">현 보증금</th>
                 <th scope="col">최종변동날짜</th>
               </tr>
             </thead>
            <tbody>
-                <th:block th:unless="${#lists.isEmpty(userDepositManageList)}"  th:each="udm : ${userDepositManageList}">
-		                  <tr>		                         		             
-		                            <td th:text="${udm.userId}"></td>
-		                            <td th:text="${udm.pastHoldingDeposit}"></td>
-		                            <td th:text="${udm.depositUsingType}"></td>
-		                            <td th:text="${udm.currentHoldingDeposit}"></td>		 
-		                            <td th:text="${udm.upDatetime}"></td>		                               		                            		                           
-		                  </tr>
-                          	</th:block>                         
-                        </tbody>
+                <th:block th:unless="${#lists.isEmpty(userDepositManageList)}"
+                     th:each="um, state : ${userDepositManageList}">
+               <tr class="table-center">
+                   <td th:text="${um.userName}"></td>
+                   <td th:text="${um.pastHoldingDeposit}"></td>
+                   <td th:text="${um.depositUsingType}"></td>
+                   <td th:text="${um.depositPayUseHistory}"></td>
+                   <td th:text="${um.currentHoldingDeposit}"></td>
+                   <td th:text="${um.upDatetime}"></td>
+               </tr>
+           </th:block>
+           	<tr th:if="${#lists.isEmpty(userDepositManageList)}">
+				<td class="table-center" colspan="6">내역이 존재하지 않습니다.</td>
+			</tr>
+            </tbody>
                          <tfoot>                  
 						 <tr>
 							<td colspan="5">
@@ -52,8 +58,7 @@
 								<a class="btn mb-2 btn-secondary" th:if="${currentPage>1}" th:href="@{/deposit/mydeposit(currentPage=${currentPage-1})}">이전</a>
 								<label class="btn mb-2 btn-secondary" th:unless="${currentPage>1}">이전</label>
 									<div class="btn-group mr-2" role="group" aria-label="First group">
-										<th:block th:each="num : ${#numbers.sequence(startPageNum,endPageNum)}" >
-											<a class="btn mb-2 btn-secondary" th:if="${currentPage != num}" th:href="@{/deposit/mydeposit(currentPage=${num})}" th:text="${num}"></a>
+										<th:block th:each="num : ${#numbers.sequence(startPageNum,endPageNum)}" >										
 											<label class="btn mb-2 btn-secondary" th:if="${currentPage == num}" th:text="${num}"></label>
 									</th:block>
 								</div>				

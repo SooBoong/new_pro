@@ -24,7 +24,7 @@ public UserDepositService(UserDepositMapper userDepositMapper) {
 	this.userDepositMapper = userDepositMapper;
 }
 
-public Map<String,Object> getUserDepositManageList(int currentPage) {
+public Map<String,Object> getUserDepositManageList(String userId, int currentPage) {
 
 	int rowPerPage = 16;
 	
@@ -53,11 +53,13 @@ public Map<String,Object> getUserDepositManageList(int currentPage) {
 	Map<String,Object> paramMap = new HashMap<String,Object>();
 	paramMap.put("startIndex", startIndex);
 	paramMap.put("rowPerPage", rowPerPage);
+	paramMap.put("userId", userId);
+	
 	log.info("paramMap:{}",paramMap);
 	
 
 	List<Map<String,Object>> userDepositManageList = userDepositMapper.getUserDepositManageList(paramMap);
-	log.info("전회 회원 보증금 목록:{}",userDepositManageList);
+	log.info("특정 회원 보증금 목록:{}",userDepositManageList);
 
 	//controller에 전달
 	paramMap.clear(); // map 객체 안의 data초기화
@@ -109,6 +111,7 @@ public Map<String,Object> getUserDepositPayList(int currentPage) {
 	paramMap.put("endPageNum", endPageNum);
 	return paramMap;
 }
+
 public Deposit getUserDeposit(String userId) {
 	Deposit userDeposit = userDepositMapper.getUserDeposit(userId);
 	

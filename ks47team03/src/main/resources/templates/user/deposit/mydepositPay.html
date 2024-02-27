@@ -34,7 +34,7 @@
 						
 						<form id="accountInsertForm" class="accountInsertForm" th:action="@{/deposit/mydepositPay}"  method="post" >						
 									<div class="form-group">
-								l		<div>- 입금자명과 결제 금액을 확인해주세요..</div>
+										<div>- 입금자명과 결제 금액을 확인해주세요..</div>
 										<div>- 결제 수단을 확인해주세요</div>										
 		                        	</div>																								
 							<div class="form-group">								
@@ -47,6 +47,7 @@
 								<label for="virtualAccountLabel">은행</label>
 								<select id="virtualAccount" name="virtualAccount" >
 											<option value="">== 은행을 선택해주세요. ==</option>
+											<option value="토스">토스페이</option>
 			                          		<option value="신한">신한은행</option>
 			                          		<option value="우리">우리은행</option>
 			                          		<option value="국민">국민은행</option>
@@ -153,11 +154,17 @@
              let virtualAccountVal = $('#virtualAccount').val();
              let chargingAmountVal = $('#chargingAmount').val();
 
+             if (virtualAccountVal === '토스'){
+				 alert('토스는 아래 결제를 선택해주세요');
+				 
+				 return  false;
+			 }
              if (virtualAccountVal === '') {
                  alert('은행 필수항목을 선택하세요');
                  
                  return false;
              }
+
 
              if (chargingAmountVal === '') {
                  alert('금액 필수항목을 선택하세요');
@@ -170,41 +177,5 @@
      
 
 </script>
-
-   <section class="order_details section-margin--small">
-    <div class="container">    
-      <div class="order_details_table">
-        <h2>보증금 결제 내역</h2>
-        <div class="table-responsive">
-          <table class="table">
-       		<thead>
-              <tr>
-                <th scope="col">아이디</th>
-                <th scope="col">이름</th>
-                <th scope="col">결제 방법</th>
-                <th scope="col">가상계좌</th>
-                <th scope="col">결제 금액</th>
-                <th scope="col">신청날짜</th>
-                <th scope="col">만료날짜</th>              
-              </tr>
-            </thead>
-           <tbody>
-                <th:block th:unless="${#lists.isEmpty(userDepositPayList)}"  th:each="udp : ${userDepositPayList}" >
-		                  <tr>		                         		             
-		                       <td th:text="${udp.userId}"></td>
-		                       <td th:text="${udp.userName}"></td>
-		                       <td th:text="${udp.paymenteMethod}"></td>
-		                       <td th:text="${udp.virtualAccount}"></td>
-		                       <td th:text="${udp.charginAmount}"></td>
-		                       <td th:text="${udp.applicationDatetime}"></td>
-		                       <td th:text="${udp.depositCompletionDatetime}"></td>		                                      		                            		                          
-		                 </tr>
-                 </th:block>                          
-             </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </section>
  </th:block>
 </html>

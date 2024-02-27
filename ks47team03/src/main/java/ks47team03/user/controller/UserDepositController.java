@@ -58,8 +58,9 @@ public class UserDepositController {
 							Model model) {						
 		String userId = (String) session.getAttribute("SID");
 
-		Map<String,Object> resultMap = userDepositService.getUserDepositManageList(currentPage);
+		Map<String,Object> resultMap = userDepositService.getUserDepositManageList(userId, currentPage);
 		int lastPage = (int)resultMap.get("lastPage");
+		
 		List<Map<String,Object>> userDepositManageList = (List<Map<String,Object>>)resultMap.get("userDepositManageList");		
 		int startPageNum = (int) resultMap.get("startPageNum");
 		int endPageNum = (int) resultMap.get("endPageNum");
@@ -67,13 +68,12 @@ public class UserDepositController {
 		
 		
 		model.addAttribute("title","회원 보증금 관리");
+		model.addAttribute("userId", userId);
+		model.addAttribute("userDepositManageList", userDepositManageList);
 		model.addAttribute("currentPage", currentPage);
 		model.addAttribute("lastPage", lastPage);
-		model.addAttribute("userDepositManageList", userDepositManageList);
 		model.addAttribute("startPageNum", startPageNum);
-		model.addAttribute("endPageNum", endPageNum);		
-		model.addAttribute("title","보증금 조회");
-		model.addAttribute("userId", userId);
+		model.addAttribute("endPageNum", endPageNum);	
 		
 		return "user/deposit/mydeposit";
 	}
