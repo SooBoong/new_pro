@@ -36,7 +36,9 @@
 									<div class="form-group">
 										<div>- 입금자명과 결제 금액을 확인해주세요..</div>
 										<div>- 결제 수단을 확인해주세요</div>										
-		                        	</div>																								
+		                        	</div>	
+		                     <input type="text" id="userId" name="userId" th:value=${session.SID} ></input>
+		                   																						
 							<div class="form-group">								
 								<label for="userName">입금자명</label>
 								<input type="text" class="form-control" id="userName" name="userName" placeholder="입금자명" 
@@ -96,35 +98,36 @@
 	</section>
     
 <script>	            
-    const clientKey = 'test_ck_JQbgMGZzorzx402jdj73l5E1em4d'
-    const tossPayments = TossPayments(clientKey)
-	
+    const clientKey = 'test_ck_JQbgMGZzorzx402jdj73l5E1em4d';
+    const tossPayments = TossPayments(clientKey);
     let button = document.getElementById('payment-button')
     let button2 = document.getElementById('payment-button2') // 결제하기 버튼
-   
+    
     button.addEventListener('click', function () {
-	    const depositName = document.getElementById('userName').value;
-    	const selectedAmount = document.getElementById('chargingAmount').value;
+    	const depositName = document.getElementById('userName').value;
+		const selectedAmount = document.getElementById('chargingAmount').value; 
+		const orderId = () =>
+	        window.btoa(Math.random()).slice(0, 20);
         tossPayments.requestPayment('가상계좌', {
           amount: parseInt(selectedAmount),
-          orderId: '2BUAd1-rnDgOilzWC3bZO',
+          orderId: orderId(),
           orderName: '보증금',
           customerName: depositName,     
           successUrl: 'http://localhost/deposit/success',
           failUrl: 'http://localhost/deposit/depositCheckFail',
-        })    
-        })    
+        });
+    });
         button2.addEventListener('click', function () {
 		const selectedAmount2 = document.getElementById('chargingAmount').value;
             tossPayments.requestPayment('계좌이체', {
               amount: parseInt(selectedAmount2),
-              orderId: '2BUAd1-rnDgOilzWC3bZO',
+              orderId: orderId(),
               orderName: '보증금',
               customerName: depositName,           
               successUrl: "http://localhost/deposit/success",
               failUrl: window.location.origin + "/fail",
-       } )
-      });
+        });
+    });
   
     /*     
   	  $('#accountInsertForm').on('submit', function(e) {
