@@ -50,7 +50,7 @@ public class AdminDepositService {
 
 
 		List<Map<String,Object>> depositRefundList = adminDepositMapper.getDepositRefundList(paramMap);
-		log.info("전회 회원 보증금 목록:{}",depositRefundList);
+		log.info("전체 회원 보증금 목록:{}",depositRefundList);
 
 		//controller에 전달
 		paramMap.clear(); // map 객체 안의 data초기화

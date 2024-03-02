@@ -42,6 +42,7 @@ public class AdminDepositController {
 		List<Map<String,Object>> depositManageList = (List<Map<String,Object>>)resultMap.get("depositManageList");
 		log.info("depositManageList:{}",depositManageList);
 		model.addAttribute("title","회원 보증금 관리");
+		
 		int startPageNum = (int) resultMap.get("startPageNum");
 		int endPageNum = (int) resultMap.get("endPageNum");
 		model.addAttribute("title","회원 보증금 관리");

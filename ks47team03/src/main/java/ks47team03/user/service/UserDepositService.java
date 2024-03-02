@@ -60,7 +60,8 @@ public Map<String,Object> getUserDepositManageList(String userId, int currentPag
 
 	List<Map<String,Object>> userDepositManageList = userDepositMapper.getUserDepositManageList(paramMap);
 	log.info("특정 회원 보증금 목록:{}",userDepositManageList);
-
+	
+	
 	//controller에 전달
 	paramMap.clear(); // map 객체 안의 data초기화
 	paramMap.put("lastPage", lastPage);
@@ -71,14 +72,13 @@ public Map<String,Object> getUserDepositManageList(String userId, int currentPag
 	return paramMap;
 }
 
-public Map<String,Object> getUserDepositPayList(String userId, int currentPage) {
+public Map<String,Object>getUserDepositPayList(String userId, int currentPage) {
+	
 	int rowPerPage = 16;
 	
 	//페이지 계산(시작될 행의 인덱스)
 	int startIndex = (currentPage-1)*rowPerPage;
-	
-	double rowsCount = userDepositMapper.getUserDepositPayListCount();
-	
+	double rowsCount = userDepositMapper.getUserDepositPayListCount(userId);
 	int lastPage = (int) Math.ceil(rowsCount/rowPerPage);
 	//Math.ceil 올림 처리
 	// 처음 번호
@@ -86,7 +86,6 @@ public Map<String,Object> getUserDepositPayList(String userId, int currentPage) 
 
     // 마지막 번호
     int endPageNum = (lastPage < 10)? lastPage : 10;
-
     if(currentPage >= 7 && lastPage > 10) {
     	startPageNum = currentPage - 5;
         endPageNum = currentPage + 4;
@@ -98,21 +97,21 @@ public Map<String,Object> getUserDepositPayList(String userId, int currentPage) 
     
 	Map<String,Object> paramMap = new HashMap<String,Object>();
 	paramMap.put("startIndex", startIndex);
-	paramMap.put("rowPerPage", rowPerPage);
+	paramMap.put("rowPerPage", rowPerPage);	
 	paramMap.put("userId", userId);
 	log.info("paramMap:{}",paramMap);
 	
+	
 	List<Map<String,Object>> userDepositPayList = userDepositMapper.getUserDepositPayList(paramMap);
-	log.info("전회 회원 보증금 목록:{}",userDepositPayList);
+	log.info("특정 회원 보증금 결제 목록:{}",userDepositPayList);
 	//controller에 전달
 	paramMap.clear(); // map 객체 안의 data초기화
 	paramMap.put("lastPage", lastPage);
-	paramMap.put("userDepositPayList", userDepositPayList);
 	paramMap.put("startPageNum", startPageNum);
 	paramMap.put("endPageNum", endPageNum);
+	paramMap.put("userDepositPayList", userDepositPayList);
 	return paramMap;
 }
-
 
 public Deposit getUserDeposit(String userId) {
 	Deposit userDeposit = userDepositMapper.getUserDeposit(userId);

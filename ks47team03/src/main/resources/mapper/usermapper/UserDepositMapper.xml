@@ -32,7 +32,8 @@
 		dph.charging_amount AS charginAmount,
 		IFNULL(va.virtual_account_name,0) AS virualAccountName,
 		IFNULL(va.virtual_account_number,0) AS virualAccountNumber,
-		IFNULL(dph.waiting_deposit_datetime, 0) AS waitingDepositDatetime
+		IFNULL(dph.waiting_deposit_datetime, 0) AS waitingDepositDatetime,
+		IFNULL(dph.deposit_completion_datetime, 0) AS depositCompletionDatetime
 	FROM
 		deposit_pay_histroy AS dph
 		LEFT join
@@ -50,12 +51,6 @@
 
 	
 	</select>
-
-	
-
-
-
-
 
  
   <select id="getUserDepositManageList" parameterType="map" resultType="map">
@@ -93,6 +88,7 @@
 			user_id= #{userId}
 	</select> 
 	
+	
 	<insert id="createDepositPayById" parameterType="Deposit">	
 		INSERT
 		  INTO deposit_pay_histroy(user_id, charging_amount, payment_method, pay_application_datetime, waiting_deposit_standard_code, waiting_deposit_period, waiting_deposit_datetime, static_code, admin_id, deposit_completion_datetime, virtual_account)
@@ -106,47 +102,89 @@
 		      , #{chargingAmount}
 		      , '무통장'
 		      , NOW()
-		      , 'waiting_deposit_standard_code1'
-		      , '3'
+		      ,(SELECT
+					wds.waiting_deposit_standard_code
+				FROM
+					waiting_deposit_standard AS wds
+				WHERE
+					wds.deposit_standard_use = 'Y')	
+		      , (SELECT
+					wds.waiting_deposit_period
+				FROM
+					waiting_deposit_standard AS wds
+				WHERE
+					wds.deposit_standard_use = 'Y')
 		      , NOW()
 		      , 'deposit_sc9_1'
 		      , 'adminid001'
-		      , NOW()
+		      , DATE_ADD(NOW(), INTERVAL 
+		      	(SELECT
+					wds.waiting_deposit_period
+				FROM
+					waiting_deposit_standard AS wds
+				WHERE
+					wds.deposit_standard_use = 'Y')
+				DAY)
 		      , #{virtualAccount}
 				)
 	</insert>
 	
  
- 
  <select id="getUserDepositPayList" parameterType="map" resultType="map">
 		/* 결제 보증금 */
-		SELECT	
+			SELECT	
 			DPH.user_id AS userId,
 			UM.user_name AS userName,
 			DPH.payment_method AS paymenteMethod,
-			IFNULL(DPH.virtual_account,'') AS virtualAccount, 
+			IFNULL(DPH.virtual_account,'계좌이체') AS virtualAccount, 		
+			IFNULL(VA.virtual_account_number,'계좌이체') AS virtualAccountNumeber,
 			DPH.charging_amount AS charginAmount,
+			SC.static_code_content AS staticCodeContent,
 			cast(DPH.pay_application_datetime as char(20))  AS applicationDatetime,
 			cast(IFNULL(DPH.deposit_completion_datetime,'') as char(20)) AS depositCompletionDatetime			
 		FROM	
 			deposit_pay_histroy AS DPH
+			LEFT JOIN
+			virtual_account AS VA
+			ON
+			DPH.virtual_account = VA.virtual_account_name
 			INNER JOIN	
 			user_manage AS UM
 			ON
 			DPH.user_id=UM.user_id
+			LEFT JOIN
+			static_code AS SC
+			ON
+			DPH.static_code = SC.static_code
 		 WHERE
-		    DPH.user_id=  #{userId}
-		order by length(DPH.deposit_pay_histroy),DPH.deposit_pay_histroy
-		LIMIT 1;
-
+		    DPH.user_id=  #{userId}		 
+		order by length(DPH.deposit_pay_histroy),DPH.deposit_pay_histroy	
+	
+		<if test="startIndex != null and startIndex > -1 ">
+			LIMIT #{startIndex},#{rowPerPage};
+		</if>
 	</select>
 
 <select id="getUserDepositPayListCount" resultType="int">
 		/* 기준 행 계산*/
-		SELECT
+		SELECT	
 			COUNT(*)
-		FROM
-			deposit_pay_histroy
+		FROM	
+			deposit_pay_histroy AS DPH
+			LEFT JOIN
+			virtual_account AS VA
+			ON
+			DPH.virtual_account = VA.virtual_account_name
+			INNER JOIN	
+			user_manage AS UM
+			ON
+			DPH.user_id=UM.user_id
+			LEFT JOIN
+			static_code AS SC
+			ON
+			DPH.static_code = SC.static_code
+		 WHERE  		   
+  			DPH.user_id=  #{userId}
 	</select> 
 	
 	<select id="getUserDeposit" parameterType="String">

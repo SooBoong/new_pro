@@ -16,7 +16,7 @@ public interface UserDepositMapper {
 	public int getUserDepositManageListCount();
 	
 	public List<Map<String,Object>> getUserDepositPayList(Map<String,Object>paramMap);
-	public int getUserDepositPayListCount();
+	public int getUserDepositPayListCount(String userId);
 	
 	public void modifyUserAccount(Account account);
 	public void addUserAccount(Account account);

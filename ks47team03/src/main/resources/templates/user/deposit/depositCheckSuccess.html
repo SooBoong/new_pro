@@ -31,7 +31,8 @@
                 <th scope="col">결제 금액</th>
                 <th scope="col">가상 계좌</th>
                 <th scope="col">가상 계좌 번호</th>
-                <th scope="col">입금 만료 기간</th>
+                <th scope="col">결제 신청 시간</th>
+                <th scope="col">입금 만료 시간</th>
               </tr>
             </thead>
           <tbody>
@@ -44,12 +45,13 @@
                    <td th:text="${um.virualAccountName}"></td>
                    <td th:text="${um.virualAccountNumber}"></td>
                    <td th:text="${um.waitingDepositDatetime}"></td>
+                   <td th:text="${um.depositCompletionDatetime}"></td>
                </tr>
            </th:block>
           </tbody>
           <tfoot>  
-           	<td colspan="6" class="text-center">
-                <a class="pages btn mb-2 btn-secondary" th:href="@{/deposit/mydeposit}">확인</a>
+           	<td colspan="7" class="text-center">
+                <a class="pages btn mb-2 btn-secondary" th:href="@{/deposit/mydepositPay}">확인</a>
             </td>        		          		
           </tfoot>
           </table>

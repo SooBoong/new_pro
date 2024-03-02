@@ -15,7 +15,8 @@ import ks47team03.common.interceptor.LoggerInterceptor;
 import ks47team03.common.interceptor.LoginInterceptor;
 
 @Configuration
-public class WebConfig implements WebMvcConfigurer{
+public cl
+ass WebConfig implements WebMvcConfigurer{
 	//파일 업로드
 	@Value("${files.path}")
 	private String filePath;

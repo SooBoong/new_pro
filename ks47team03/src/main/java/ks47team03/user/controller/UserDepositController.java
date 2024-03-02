@@ -44,13 +44,9 @@ public class UserDepositController {
 		model.addAttribute("title","결제 성공");
 		model.addAttribute("userId", userId);
 		model.addAttribute("depositPaySuccessList", depositPaySuccessList);
-		return "user/deposit/depositCheckSuccess";
-		
-		
-		
-		
-		
+		return "user/deposit/depositCheckSuccess";		
 	}
+	
 	@GetMapping("/depositCheckFail")
 	public String depositCheckfail(Model model) {
 		model.addAttribute("title","결제 실패");
@@ -69,10 +65,7 @@ public class UserDepositController {
 		
 		List<Map<String,Object>> userDepositManageList = (List<Map<String,Object>>)resultMap.get("userDepositManageList");		
 		int startPageNum = (int) resultMap.get("startPageNum");
-		int endPageNum = (int) resultMap.get("endPageNum");
-		
-		
-		
+		int endPageNum = (int) resultMap.get("endPageNum");	
 		model.addAttribute("title","회원 보증금 관리");
 		model.addAttribute("userId", userId);
 		model.addAttribute("userDepositManageList", userDepositManageList);
@@ -80,31 +73,30 @@ public class UserDepositController {
 		model.addAttribute("lastPage", lastPage);
 		model.addAttribute("startPageNum", startPageNum);
 		model.addAttribute("endPageNum", endPageNum);	
-		
 		return "user/deposit/mydeposit";
 	}
 	
 	//내 보증금 결제
-    @GetMapping("/mydepositPay")
+	@GetMapping("/mydepositPay")
     public String mydepositPay (@RequestParam (value = "currentPage", required = false, defaultValue = "1") int currentPage,
-                               HttpSession session, Model model) {
-     String userId = (String) session.getAttribute("SID");
-      Map<String, Object> resultMap = userDepositService.getUserDepositPayList(userId, currentPage);
-      String userName = (String) session.getAttribute("SNAME");
-      int lastPage = (int) resultMap.get("lastPage");
-      int startPageNum = (int) resultMap.get("startPageNum");
-      int endPageNum = (int) resultMap.get("endPageNum");
-      
-      List<Map<String, Object>> userDepositPayList = (List<Map<String, Object>>) resultMap.get("userDepositPayList");
-      log.info("userDepositPayList:{}", userDepositPayList);
+                                HttpSession session, 
+                                Model model) {
+     String userId = (String) session.getAttribute("SID"); 
+     Map<String, Object> resultMap = userDepositService.getUserDepositPayList(userId, currentPage);    
+     int lastPage = (int) resultMap.get("lastPage");    
+     int startPageNum = (int) resultMap.get("startPageNum");
+     int endPageNum = (int) resultMap.get("endPageNum");      
+
+     List<Map<String, Object>> userDepositPayList = (List<Map<String, Object>>)resultMap.get("userDepositPayList");
+     log.info("userDepositPayList:{}", userDepositPayList);
 
       model.addAttribute("title", "보증금 결제");
+      model.addAttribute("userId", userId);
       model.addAttribute("currentPage", currentPage);
       model.addAttribute("lastPage", lastPage);
       model.addAttribute("startPageNum", startPageNum);
       model.addAttribute("endPageNum", endPageNum);
-      model.addAttribute("userDepositPayList", userDepositPayList);
-      model.addAttribute("userName", userName);
+      model.addAttribute("userDepositPayList", userDepositPayList);    
       
       return "user/deposit/mydepositPay";
     }
@@ -117,8 +109,7 @@ public class UserDepositController {
 	}
     
     
-    
-    //보증금 환
+    //보증금 환급
 	@GetMapping("/mydepositRefund")
 	public String depoistRefundSponsorship(Model model, HttpSession session) {
 		String accountName = (String) session.getAttribute("SNAME");
