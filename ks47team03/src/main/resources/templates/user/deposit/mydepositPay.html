@@ -2,215 +2,216 @@
 <html xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	  layout:decorate="~{user/layout/default}">
-	<th:block layout:fragment="customContents">
-  
- <!-- ================ start banner area ================= -->
-  <head>
-  	<meta charset="utf-8"/>
- 	<script th:src="@{/user/js/jquery-3.7.0.js}"></script>
- 	 <script src="https://js.tosspayments.com/v1/payment"></script>
- 	 
-  </head>
-    <section class="page-banner-area" id="category">
-    <div class="container h-100">
-        <div class="text-center">
-          <h1>나의 보증금 결제</h1>
-          <nav aria-label="breadcrumb" class="banner-breadcrumb">
-            <ol class="breadcrumb">
-            	<li class="breadcrumb-item"><a href="/"><span class="fe fe-16 fe-home"></span></a></li>
-              <li class="breadcrumb-item"><span class="fe fe-16 fe-chevron-right"></span></li>
-              <li class="breadcrumb-item active" aria-current="page">나의 보증금 결제</li>
-            </ol>
-          </nav>
-      </div>
-    </div>
-  </section> 
- <section class="order_details section-margin--small">			
+<th:block layout:fragment="customContents">
+
+	<!-- ================ start banner area ================= -->
+	<head>
+		<meta charset="utf-8"/>
+		<script th:src="@{/user/js/jquery-3.7.0.js}"></script>
+		<script src="https://js.tosspayments.com/v1/payment"></script>
+
+	</head>
+	<section class="page-banner-area" id="category">
+		<div class="container h-100">
+			<div class="text-center">
+				<h1>나의 보증금 결제</h1>
+				<nav aria-label="breadcrumb" class="banner-breadcrumb">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item"><a href="/"><span class="fe fe-16 fe-home"></span></a></li>
+						<li class="breadcrumb-item"><span class="fe fe-16 fe-chevron-right"></span></li>
+						<li class="breadcrumb-item active" aria-current="page">나의 보증금 결제</li>
+					</ol>
+				</nav>
+			</div>
+		</div>
+	</section>
+	<section class="order_details section-margin--small">
 		<div class="container">
-		<h3 class="page-title">보증금 결제</h3>
+			<h3 class="page-title">보증금 결제</h3>
 			<div class="card my-4">
 				<div class="card-body-wizard">
 					<div class="example-basic">
-						
-						<form id="accountInsertForm" class="accountInsertForm" th:action="@{/deposit/mydepositPay}"  method="post" >						
-									<div class="form-group">
-										<div>- 입금자명과 결제 금액을 확인해주세요..</div>
-										<div>- 결제 수단을 확인해주세요</div>										
-		                        	</div>
-		                   																						
-							<div class="form-group">								
-								<label for="userName">입금자명</label>
-								<input type="text" class="form-control" id="userName" name="userName" placeholder="입금자명" 
-								onfocus="this.placeholder = '입금자명'" onblur="this.placeholder = '입금자명'" th:value="${session.SNAME}">
+
+						<form id="accountInsertForm" class="accountInsertForm" th:action="@{/deposit/mydepositPay}"  method="post" >
+							<div class="form-group">
+								<div>- 입금자명과 결제 금액을 확인해주세요..</div>
+								<div>- 결제 수단을 확인해주세요</div>
 							</div>
-							
+
+							<div class="form-group">
+								<label for="userName">입금자명</label>
+								<input type="text" class="form-control" id="userName" name="userName" placeholder="입금자명"
+									   onfocus="this.placeholder = '입금자명'" onblur="this.placeholder = '입금자명'" th:value="${session.SNAME}">
+							</div>
+
 							<div class="form-group">
 								<label for="virtualAccountLabel">은행</label>
 								<select id="virtualAccount" name="virtualAccount" >
-											<option value="">== 은행을 선택해주세요. ==</option>
-											<option value="토스">토스페이</option>
-			                          		<option value="신한">신한은행</option>
-			                          		<option value="우리">우리은행</option>
-			                          		<option value="국민">국민은행</option>
-			                          		<option value="토스">토스뱅크</option>
-			                          		<option value="카카오">카카오뱅크</option>
-			                          		<option value="새마을금고">새마을금고</option>
-			                          		<option value="수협" >수협</option>
-			                          		<option value="농협">농협</option>
-			                          		<option value="케이뱅크">케이뱅크</option>
-			                          		<option value="전북">전북</option>
+									<option value="">== 은행을 선택해주세요. ==</option>
+									<option value="토스">토스페이</option>
+									<option value="신한">신한은행</option>
+									<option value="우리">우리은행</option>
+									<option value="국민">국민은행</option>
+									<option value="토스">토스뱅크</option>
+									<option value="카카오">카카오뱅크</option>
+									<option value="새마을금고">새마을금고</option>
+									<option value="수협" >수협</option>
+									<option value="농협">농협</option>
+									<option value="케이뱅크">케이뱅크</option>
+									<option value="전북">전북</option>
 								</select>
-							</div>						
+							</div>
 							<div class="form-group">
 								<label for="chargingAmountLabel">결제금액</label>
 								<select id="chargingAmount" name="chargingAmount" >
 									<option value="">== 금액을 선택해주세요. ==</option>
-									<option value="1000">1000</option>	
-									<option value="2000">2000</option>	
-									<option value="3000">3000</option>	
-									<option value="4000">4000</option>	
-									<option value="5000">5000</option>	
-									<option value="6000">6000</option>	
-									<option value="7000">7000</option>	
-									<option value="8000">8000</option>	
-									<option value="9000">9000</option>	
-									<option value="10000">10000</option>	
-									<option value="123456789">123456789</option>	
-									<option value="77777777777777">77777777777777</option>	
-									<option value="10000000000000000">10000000000000000</option>	
+									<option value="1000">1000</option>
+									<option value="2000">2000</option>
+									<option value="3000">3000</option>
+									<option value="4000">4000</option>
+									<option value="5000">5000</option>
+									<option value="6000">6000</option>
+									<option value="7000">7000</option>
+									<option value="8000">8000</option>
+									<option value="9000">9000</option>
+									<option value="10000">10000</option>
+									<option value="123456789">123456789</option>
+									<option value="77777777777777">77777777777777</option>
+									<option value="10000000000000000">10000000000000000</option>
 								</select>
-								</div>		
-								<div class="col-md-12 form-group">														
 							</div>
-							<div>										
-							 <button class="btn mb-2 btn-secondary margin-btn" type="submit" id="createVirtualAccountBtn" >무통장</button>
+							<div class="col-md-12 form-group">
 							</div>
-						</form>				
-							 <label>--------------------------------------------------</label>
-							 <p></p>													
-							 <button class="btn mb-2 btn-secondary margin-btn" id="payment-button">무통장결제</button>
-							 <button class="btn mb-2 btn-secondary margin-btn" id="payment-button2">계좌이체</button>
+							<div>
+								<button class="btn mb-2 btn-secondary margin-btn" type="submit" id="createVirtualAccountBtn" >전용 계좌 입금</button>
+							</div>
+						</form>
+						<label>--------------------------------------------------</label>
+						<p></p>
+						<button class="btn mb-2 btn-secondary margin-btn" id="payment-button">무통장결제</button>
+						<button class="btn mb-2 btn-secondary margin-btn" id="payment-button2">계좌이체</button>
 					</div>
 				</div>
 			</div>
 		</div>
 	</section>
-    
-<script>	            
-    const clientKey = 'test_ck_JQbgMGZzorzx402jdj73l5E1em4d';
-    const tossPayments = TossPayments(clientKey);
-    let button = document.getElementById('payment-button')
-    let button2 = document.getElementById('payment-button2') // 결제하기 버튼
-    
-    button.addEventListener('click', function () {
-    	const depositName = document.getElementById('userName').value;
-		const selectedAmount = document.getElementById('chargingAmount').value; 
+
+	<script>
+		const clientKey = 'test_ck_JQbgMGZzorzx402jdj73l5E1em4d';
+		const tossPayments = TossPayments(clientKey);
+		const depositName = document.getElementById('userName').value;
 		const orderId = () =>
-	        window.btoa(Math.random()).slice(0, 20);
-        tossPayments.requestPayment('가상계좌', {
-          amount: parseInt(selectedAmount),
-          orderId: orderId(),
-          orderName: '보증금',
-          customerName: depositName,     
-          successUrl: 'http://localhost/deposit/success',
-          failUrl: 'http://localhost/deposit/fail',
-        });
-    });
+				window.btoa(Math.random()).slice(0, 20);
+		let button = document.getElementById('payment-button')
+		let button2 = document.getElementById('payment-button2') // 결제하기 버튼
 
-        button2.addEventListener('click', function () {
-		const selectedAmount2 = document.getElementById('chargingAmount').value;
-            tossPayments.requestPayment('계좌이체', {
-              amount: parseInt(selectedAmount2),
-              orderId: orderId(),
-              orderName: '보증금',
-              customerName: depositName,           
-              successUrl: "http://localhost/deposit/success",
-              failUrl: 'http://localhost/deposit/fail',
-        });
-    });
-
-  	 $(document).ready(function () {
-         $('#accountInsertForm').on('submit', function (e) {
-
-             let virtualAccountVal = $('#virtualAccount').val();
-             let chargingAmountVal = $('#chargingAmount').val();
-
-             if (virtualAccountVal === '토스' ){
-				 alert('토스는 아래 결제를 선택해주세요');
-				 
-				 return  false;
-			 }
-             if (virtualAccountVal === '') {
-                 alert('은행 필수항목을 선택하세요');
-                 
-                 return false;
-             }
+		button.addEventListener('click', function () {
+			const selectedAmount = document.getElementById('chargingAmount').value;
+			tossPayments.requestPayment('가상계좌', {
+				amount: parseInt(selectedAmount),
+				orderId: orderId(),
+				orderName: '보증금',
+				customerName: depositName,
+				successUrl: 'http://localhost/deposit/success',
+				failUrl: 'http://localhost/deposit/fail'
+			});
+		});
 
 
-             if (chargingAmountVal === '') {
-                 alert('금액 필수항목을 선택하세요');
-                 return false;
-             }
-      
-         });
-     });
-  </script>
-  <section class="order_details section-margin--small">
-    <div class="container">    
-      <div class="order_details_table">
-        <h2>보증금 결제 내역</h2>
-        <div class="table-responsive">
-          <table class="table">
-       		<thead>
-              <tr>
-                <th scope="col">아이디</th>
-                <th scope="col">이름</th>
-                <th scope="col">결제 방법</th>
-                <th scope="col">입금 은행</th>
-                <th scope="col">입금 계좌</th>
-                <th scope="col">결제 금액</th>
-                <th scope="col">상태</th>                
-                <th scope="col">신청날짜</th>
-                <th scope="col">만료날짜</th>              
-              </tr>
-            </thead>
-           <tbody>
-                <th:block th:unless="${#lists.isEmpty(userDepositPayList)}"  th:each="udp : ${userDepositPayList}" >
-		                  <tr>		                         		             
-		                       <td th:text="${udp.userId}"></td>
-		                       <td th:text="${udp.userName}"></td>
-		                       <td th:text="${udp.paymenteMethod}"></td>
-		                       <td th:text="${udp.virtualAccount}"></td>
-		                       <td th:text="${udp.virtualAccountNumeber}"></td>
-		                       <td th:text="${udp.charginAmount}"></td>
-		                       <td th:text="${udp.staticCodeContent}"></td>		                       
-		                       <td th:text="${udp.applicationDatetime}"></td>
-		                       <td th:text="${udp.depositCompletionDatetime}"></td>		                                      		                            		                          
-		                 </tr>
-                 </th:block>                          
-             </tbody>
-               <tfoot>                  
-						 <tr>
+		button2.addEventListener('click', function () {
+			const selectedAmount2 = document.getElementById('chargingAmount').value;
+			tossPayments.requestPayment('계좌이체', {
+				amount: parseInt(selectedAmount2),
+				orderId: orderId(),
+				orderName: '보증금',
+				customerName: depositName,
+				successUrl: "http://localhost/deposit/success",
+				failUrl: 'http://localhost/deposit/fail'
+			});
+		});
+
+		$(document).ready(function () {
+			$('#accountInsertForm').on('submit', function (e) {
+
+				let virtualAccountVal = $('#virtualAccount').val();
+				let chargingAmountVal = $('#chargingAmount').val();
+
+				if (virtualAccountVal === '토스' ){
+					alert('토스는 아래 결제를 선택해주세요');
+
+					return  false;
+				}
+				if (virtualAccountVal === '') {
+					alert('은행 필수항목을 선택하세요');
+
+					return false;
+				}
+
+
+				if (chargingAmountVal === '') {
+					alert('금액 필수항목을 선택하세요');
+					return false;
+				}
+
+			});
+		});
+	</script>
+	<section class="order_details section-margin--small">
+		<div class="container">
+			<div class="order_details_table">
+				<h2>보증금 결제 내역</h2>
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+						<tr>
+							<th scope="col">아이디</th>
+							<th scope="col">이름</th>
+							<th scope="col">결제 방법</th>
+							<th scope="col">입금 은행</th>
+							<th scope="col">입금 계좌</th>
+							<th scope="col">결제 금액</th>
+							<th scope="col">상태</th>
+							<th scope="col">신청날짜</th>
+							<th scope="col">만료날짜</th>
+						</tr>
+						</thead>
+						<tbody>
+						<th:block th:unless="${#lists.isEmpty(userDepositPayList)}"  th:each="udp : ${userDepositPayList}" >
+							<tr>
+								<td th:text="${udp.userId}"></td>
+								<td th:text="${udp.userName}"></td>
+								<td th:text="${udp.paymenteMethod}"></td>
+								<td th:text="${udp.virtualAccount}"></td>
+								<td th:text="${udp.virtualAccountNumeber}"></td>
+								<td th:text="${udp.charginAmount}"></td>
+								<td th:text="${udp.staticCodeContent}"></td>
+								<td th:text="${udp.applicationDatetime}"></td>
+								<td th:text="${udp.depositCompletionDatetime}"></td>
+							</tr>
+						</th:block>
+						</tbody>
+						<tfoot>
+						<tr>
 							<td colspan="9">
 								<a class="pages btn mb-2 btn-secondary" th:href="@{/deposit/mydepositPay}">처음으로</a>
 								<a class="btn mb-2 btn-secondary" th:if="${currentPage>1}" th:href="@{/deposit/mydepositPay(currentPage=${currentPage-1})}">이전</a>
 								<label class="btn mb-2 btn-secondary" th:unless="${currentPage>1}">이전</label>
-										<th:block th:each="num : ${#numbers.sequence(startPageNum,endPageNum)}" >
-												<a class="btn mb-2 btn-secondary" th:if="${currentPage != num}" th:href="@{/deposit/mydepositPay(currentPage=${num})}" th:text="${num}"></a>
-												<label class="btn mb-2 btn-secondary" th:if="${currentPage == num}" th:text="${num}"></label>
-											</th:block>
-								</div>				
-								<a class="btn mb-2 btn-secondary" th:if="${currentPage<lastPage}" th:href="@{/deposit/mydepositPay(currentPage=${currentPage+1})}">다음</a>
-								<label class="btn mb-2 btn-secondary" th:unless="${currentPage<lastPage}">다음</label>
-								<a class="pages btn mb-2 btn-secondary" th:href=@{/deposit/mydepositPay(currentPage=${lastPage})}>마지막으로</a>
-							</td>
-						</tr> 							
+								<th:block th:each="num : ${#numbers.sequence(startPageNum,endPageNum)}" >
+									<a class="btn mb-2 btn-secondary" th:if="${currentPage != num}" th:href="@{/deposit/mydepositPay(currentPage=${num})}" th:text="${num}"></a>
+									<label class="btn mb-2 btn-secondary" th:if="${currentPage == num}" th:text="${num}"></label>
+								</th:block>
+				</div>
+				<a class="btn mb-2 btn-secondary" th:if="${currentPage<lastPage}" th:href="@{/deposit/mydepositPay(currentPage=${currentPage+1})}">다음</a>
+				<label class="btn mb-2 btn-secondary" th:unless="${currentPage<lastPage}">다음</label>
+				<a class="pages btn mb-2 btn-secondary" th:href=@{/deposit/mydepositPay(currentPage=${lastPage})}>마지막으로</a>
+				</td>
+				</tr>
 				</tfoot>
-          </table>
-        </div>
-      </div>
-    </div>
-  </section>
+				</table>
+			</div>
+		</div>
+		</div>
+	</section>
 
- </th:block>
+</th:block>
 </html>

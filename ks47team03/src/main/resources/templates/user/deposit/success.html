@@ -85,14 +85,13 @@
       const paymentKeyElement = document.getElementById("paymentKey");
       const orderIdElement = document.getElementById("orderId");
       const amountElement = document.getElementById("amount");
-      const methodElement = document.getElementById("method");
+      const method = document.getElementById("method");
 
 
       orderIdElement.textContent = urlParams.get("orderId");
       amountElement.textContent = urlParams.get("amount");
       paymentKeyElement.textContent =urlParams.get("paymentKey");
-      methodElement.textContent =
-    console.log(amountElement);
+      console.log(method);
 
 
 

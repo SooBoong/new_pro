@@ -69,6 +69,9 @@ public class UserDepositController {
 		obj.put("orderId", orderId);
 		obj.put("amount", amount);
 		obj.put("paymentKey", paymentKey);
+		obj.put("method", method);
+		obj.put("transactionAt", transactionAt);
+		log.info("jsonObj = {}", obj);
 
 
 		String tossPaySecretKey = "test_sk_LBa5PzR0ArngwDn2wKx8vmYnNeDM";
@@ -93,9 +96,8 @@ public class UserDepositController {
 
 		Reader reader = new InputStreamReader(responseStream, StandardCharsets.UTF_8);
 		JSONObject jsonObject = (JSONObject) parser.parse(reader);
+		log.info("parserJsonObj = {}", jsonObject);
 		responseStream.close();
-
-
 
 
 		return ResponseEntity.status(code).body(jsonObject);
