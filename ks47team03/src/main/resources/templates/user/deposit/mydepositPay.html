@@ -36,8 +36,7 @@
 									<div class="form-group">
 										<div>- 입금자명과 결제 금액을 확인해주세요..</div>
 										<div>- 결제 수단을 확인해주세요</div>										
-		                        	</div>	
-		                     <input type="text" id="userId" name="userId" th:value=${session.SID} ></input>
+		                        	</div>
 		                   																						
 							<div class="form-group">								
 								<label for="userName">입금자명</label>
@@ -114,9 +113,10 @@
           orderName: '보증금',
           customerName: depositName,     
           successUrl: 'http://localhost/deposit/success',
-          failUrl: 'http://localhost/deposit/depositCheckFail',
+          failUrl: 'http://localhost/deposit/fail',
         });
     });
+
         button2.addEventListener('click', function () {
 		const selectedAmount2 = document.getElementById('chargingAmount').value;
             tossPayments.requestPayment('계좌이체', {
@@ -125,32 +125,10 @@
               orderName: '보증금',
               customerName: depositName,           
               successUrl: "http://localhost/deposit/success",
-              failUrl: window.location.origin + "/fail",
+              failUrl: 'http://localhost/deposit/fail',
         });
     });
-  
-    /*     
-  	  $('#accountInsertForm').on('submit', function(e) {
-  		console.log('ff')
-  		 e.preventDefault();
-  	  let virtualAccountVal = $('virtualAccount').val();
-  	  let chargingAmountVal = $('chargingAmount').val();
-  	 
-  	  if(virtualAccountVal == ''){    		 
-  		  alert('은행 필수항목을 선택하세요'); 
-  		console.log('ss')
- 			  return false;
-  	  }
-  	  
-  	  if(chargingAmountVal == ''){
-  		  alert('금액 필수항목을 선택하세요');
-  		console.log('dd')
- 			  return false;
-  	  }       
-  	 }); 
-  	  
-  	   */
-  	  
+
   	 $(document).ready(function () {
          $('#accountInsertForm').on('submit', function (e) {
 

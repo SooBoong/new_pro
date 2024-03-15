@@ -1,15 +1,25 @@
 package ks47team03.user.controller;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ser.Serializers;
+import jakarta.servlet.http.HttpServletRequest;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpSession;
 import ks47team03.admin.mapper.AdminCommonMapper;
@@ -27,11 +37,101 @@ public class UserDepositController {
 	
 	// 의존성 주입
 	private final UserDepositService userDepositService;
-	
-	
+
+
 	public UserDepositController(UserDepositService userDepositService) {
 		this.userDepositService = userDepositService;
 	}
+
+	@RequestMapping(value = "/confirm")
+	public ResponseEntity<JSONObject> confirmPayment( Model model,
+													  @RequestBody String jsonBody) throws Exception {
+
+		JSONParser parser = new JSONParser();
+		String orderId;
+		String amount;
+		String paymentKey;
+		String method;
+		String transactionAt;
+		String orderName;
+		try {
+			JSONObject requestData = (JSONObject) parser.parse(jsonBody);
+			paymentKey = (String) requestData.get("paymentKey");
+			orderId = (String) requestData.get("orderId");
+			amount = (String) requestData.get("amount");
+			method = (String) requestData.get("method");
+			transactionAt = (String) requestData.get("transactionAt");
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
+		;
+		JSONObject obj = new JSONObject();
+		obj.put("orderId", orderId);
+		obj.put("amount", amount);
+		obj.put("paymentKey", paymentKey);
+
+
+		String tossPaySecretKey = "test_sk_LBa5PzR0ArngwDn2wKx8vmYnNeDM";
+		Base64.Encoder encoder = Base64.getEncoder();
+		byte[] encodedBytes = encoder.encode((tossPaySecretKey + ":").getBytes("UTF-8"));
+		String authorizations = "Basic " + new String(encodedBytes, 0, encodedBytes.length);
+
+		URL url = new URL("https://api.tosspayments.com/v1/payments/confirm");
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		connection.setRequestProperty("Authorization", authorizations);
+		connection.setRequestProperty("Content-Type", "application/json");
+		connection.setRequestMethod("POST");
+		connection.setDoOutput(true);
+
+		OutputStream outputStream = connection.getOutputStream();
+		outputStream.write(obj.toString().getBytes("UTF-8"));
+
+		int code = connection.getResponseCode();
+		boolean isSuccess = code == 200 ? true : false;
+
+		InputStream responseStream = isSuccess ? connection.getInputStream() : connection.getErrorStream();
+
+		Reader reader = new InputStreamReader(responseStream, StandardCharsets.UTF_8);
+		JSONObject jsonObject = (JSONObject) parser.parse(reader);
+		responseStream.close();
+
+
+
+
+		return ResponseEntity.status(code).body(jsonObject);
+	}
+
+
+	@RequestMapping(value = "/success", method = RequestMethod.GET)
+	public String tossPaySuccess(HttpServletRequest request, Model model) throws Exception{
+		return "user/deposit/success";
+	}
+
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public String index(HttpServletRequest request, Model model) throws Exception {
+
+		return "user/deposit//checkout";
+	}
+
+	/**
+	 * 인증실패처리
+	 * @param request
+	 * @param model
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/fail", method = RequestMethod.GET)
+	public String failPayment(HttpServletRequest request, Model model) throws Exception {
+		String failCode = request.getParameter("code");
+		String failMessage = request.getParameter("message");
+
+		model.addAttribute("code", failCode);
+		model.addAttribute("message", failMessage);
+
+		return "user/deposit/fail";
+	}
+
+
 	//일반 결제 성공 페이지
 	
 	@GetMapping("/depositCheckSuccess")

@@ -1,34 +1,47 @@
 <!DOCTYPE html>
-<html lang="ko">
-  <head>
-  
-    <meta charset="utf-8" />
-    <link
-      rel="icon"
-      href="https://static.toss.im/icons/png/4x/icon-toss-logo.png"
-    />
-    <link rel="stylesheet" type="text/css" href="style.css" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>토스페이먼츠 샘플 프로젝트</title>
-  </head>
-
-  <body>
-    <div class="result wrapper">
-      <div class="box_section">
-        <h2 style="padding: 20px 0px 10px 0px">
-          <img
-            width="25px"
-            src="https://static.toss.im/3d-emojis/u1F6A8-apng.png"
-          />
-          결제 실패
-        </h2>
-        <p id="code"></p>
-        <p id="message"></p>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{user/layout/default}">
+<th:block layout:fragment="customContents">
+  <section class="page-banner-area" id="category">
+    <div class="container h-100">
+      <div class="text-center">
+        <h1>보증금 결제 성공</h1>
+        <nav aria-label="breadcrumb" class="banner-breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/"><span class="fe fe-16 fe-home"></span></a></li>
+            <li class="breadcrumb-item"><span class="fe fe-16 fe-chevron-right"></span></li>
+            <li class="breadcrumb-item active" aria-current="page">보증금 결제 실패</li>
+          </ol>
+        </nav>
       </div>
     </div>
-  </body>
-<script th:src="@{/user/js/jquery-3.7.0.js}"></script>
+  </section>
+<section class="order_details section-margin--small">
+  <div class="container">
+    <div class="order_details_table">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+          <tr>
+            <th scope="col">실패 코드</th>
+            <th scope="col">실패 사유</th>
+          </tr>
+          </thead>
+          <tbody>
+          <th:block>
+            <tr class="table-center">
+              <td th:id="code"></td>
+              <td th:id="message"></td>
+            </tr>
+          </th:block>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
 <script>
   const urlParams = new URLSearchParams(window.location.search);
 
@@ -38,4 +51,7 @@
   codeElement.textContent = "에러코드: " + urlParams.get("code");
   messageElement.textContent = "실패 사유: " + urlParams.get("message");
 </script>
+</th:block>
 </html>
+
+

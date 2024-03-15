@@ -1,46 +1,68 @@
 <!DOCTYPE html>
-<html lang="ko">
-  <head>
-    <meta charset="utf-8" />
-    <link
-      rel="icon"
-      href="https://static.toss.im/icons/png/4x/icon-toss-logo.png"
-    />
-    <link rel="stylesheet" type="text/css" href="style.css" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>토스페이먼츠 샘플 프로젝트</title>
-  </head>
-  <body>
-    <div class="result wrapper">
-      <div class="box_section">
-        <h2 style="padding: 20px 0px 10px 0px">
-          <img
-            width="35px"
-            src="https://static.toss.im/3d-emojis/u1F389_apng.png"
-          />
-          결제 성공
-        </h2>
-
-        <p id="paymentKey"></p>
-        <p id="orderId"></p>
-        <p id="amount"></p>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{user/layout/default}">
+<th:block layout:fragment="customContents">
+  <section class="page-banner-area" id="category">
+    <div class="container h-100">
+      <div class="text-center">
+        <h1>보증금 결제 성공</h1>
+        <nav aria-label="breadcrumb" class="banner-breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/"><span class="fe fe-16 fe-home"></span></a></li>
+            <li class="breadcrumb-item"><span class="fe fe-16 fe-chevron-right"></span></li>
+            <li class="breadcrumb-item active" aria-current="page">보증금 결제 성공</li>
+          </ol>
+        </nav>
       </div>
     </div>
+  </section>
+  <section class="order_details section-margin--small">
+    <div class="container">
+      <div class="order_details_table">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+            <tr>
+              <th scope="col">주문번호</th>
+              <th scope="col">결제 금액</th>
+              <th scope="col">계좌주명</th>
+              <th scope="col">1</th>
+              <th scope="col">2</th>
+              <th scope="col">3</th>
+            </tr>
+            </thead>
+            <tbody>
+            <th:block>
+              <tr class="table-center">
+                <td th:id="paymentKey"></td>
+                <td th:id="amount"></td>
+                <td th:id="orderId"></td>
+                <td th:id="method"></td>
+                <td th:id="transactionAt"></td>
+                <td th:id="orderName"></td>
+              </tr>
+            </th:block>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
     <script>
       // 쿼리 파라미터 값이 결제 요청할 때 보낸 데이터와 동일한지 반드시 확인하세요.
       // 클라이언트에서 결제 금액을 조작하는 행위를 방지할 수 있습니다.
       const urlParams = new URLSearchParams(window.location.search);
-
       // 서버로 결제 승인에 필요한 결제 정보를 보내세요.
       async function confirm() {
-        var requestData = {
+        let requestData = {
           paymentKey: urlParams.get("paymentKey"),
-          orderId: urlParams.get("orderId"),
           amount: urlParams.get("amount"),
+          orderId: urlParams.get("orderId"),
+
         };
 
-        const response = await fetch("/confirm", {
+        const response = await fetch("/deposit/confirm", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -60,15 +82,20 @@
         console.log(json);
       }
       confirm();
-
       const paymentKeyElement = document.getElementById("paymentKey");
       const orderIdElement = document.getElementById("orderId");
       const amountElement = document.getElementById("amount");
+      const methodElement = document.getElementById("method");
 
-      orderIdElement.textContent = "주문번호: " + urlParams.get("orderId");
-      amountElement.textContent = "결제 금액: " + urlParams.get("amount");
-      paymentKeyElement.textContent =
-        "paymentKey: " + urlParams.get("paymentKey");
+
+      orderIdElement.textContent = urlParams.get("orderId");
+      amountElement.textContent = urlParams.get("amount");
+      paymentKeyElement.textContent =urlParams.get("paymentKey");
+      methodElement.textContent =
+    console.log(amountElement);
+
+
+
     </script>
-  </body>
+</th:block>
 </html>
