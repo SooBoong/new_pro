@@ -27,9 +27,6 @@
               <th scope="col">주문번호</th>
               <th scope="col">결제 금액</th>
               <th scope="col">계좌주명</th>
-              <th scope="col">1</th>
-              <th scope="col">2</th>
-              <th scope="col">3</th>
             </tr>
             </thead>
             <tbody>
@@ -38,9 +35,6 @@
                 <td th:id="paymentKey"></td>
                 <td th:id="amount"></td>
                 <td th:id="orderId"></td>
-                <td th:id="method"></td>
-                <td th:id="transactionAt"></td>
-                <td th:id="orderName"></td>
               </tr>
             </th:block>
             </tbody>
@@ -85,13 +79,11 @@
       const paymentKeyElement = document.getElementById("paymentKey");
       const orderIdElement = document.getElementById("orderId");
       const amountElement = document.getElementById("amount");
-      const method = document.getElementById("method");
-
 
       orderIdElement.textContent = urlParams.get("orderId");
       amountElement.textContent = urlParams.get("amount");
       paymentKeyElement.textContent =urlParams.get("paymentKey");
-      console.log(method);
+
 
 
 
