@@ -61,6 +61,7 @@ public class UserDepositController {
 			amount = (String) requestData.get("amount");
 			method = (String) requestData.get("method");
 			transactionAt = (String) requestData.get("transactionAt");
+			orderName = (String) requestData.get("orderName");
 		} catch (ParseException e) {
 			throw new RuntimeException(e);
 		}
@@ -71,8 +72,9 @@ public class UserDepositController {
 		obj.put("paymentKey", paymentKey);
 		obj.put("method", method);
 		obj.put("transactionAt", transactionAt);
+		obj.put("orderName", orderName);
 		log.info("jsonObj = {}", obj);
-
+		log.info("obj");
 
 		String tossPaySecretKey = "test_sk_LBa5PzR0ArngwDn2wKx8vmYnNeDM";
 		Base64.Encoder encoder = Base64.getEncoder();
@@ -103,6 +105,7 @@ public class UserDepositController {
 		return ResponseEntity.status(code).body(jsonObject);
 	}
 
+	/*@PostMapping*/
 
 	@RequestMapping(value = "/success", method = RequestMethod.GET)
 	public String tossPaySuccess(HttpServletRequest request, Model model) throws Exception{
@@ -213,33 +216,18 @@ public class UserDepositController {
     
     //보증금 환급
 	@GetMapping("/mydepositRefund")
-	public String depoistRefundSponsorship(Model model, HttpSession session) {
-		String accountName = (String) session.getAttribute("SNAME");
+	public String depoistRefundGet(Model model, HttpSession session) {
 		String userId = (String) session.getAttribute("SID");
-		String bankName = "notSelect";
-		String accountNum = "계좌번호를 입력해주세요.";
-		int currentHoldingDeposit = 0;
-		
-		Account userAccount = userDepositService.getUserAccount(userId);
-		
-		Deposit userDeposit = userDepositService.getUserDeposit(userId);
-				
-		if(userAccount != null) {			
-			bankName = userAccount.getBankName();
-			accountNum = userAccount.getAccountNumber();
-		}
-		
-		if(userDeposit !=null) currentHoldingDeposit = userDeposit.getCurrentHoldingDeposit();
-		
-		model.addAttribute("title","구구컵 : 포인트 환급 신청");
-		model.addAttribute("accountName",accountName);
-		model.addAttribute("bankName",bankName);
-		model.addAttribute("accountNum",accountNum);
-		model.addAttribute("currentHoldingDeposit",currentHoldingDeposit);
+		model.addAttribute("title", "보증금 환급");
+		model.addAttribute("userId", userId);
 
 		return "user/deposit/mydepositRefund";
 	}
-	
+	@PostMapping("mydepositRefund")
+	public String depoistRefundPost(Deposit depositRefundHistory){
+		userDepositService.createDepositRefund(depositRefundHistory);
+		return "redirect:mydepositRefund";
+	}
 	
 	
 	

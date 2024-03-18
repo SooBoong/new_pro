@@ -27,11 +27,7 @@ public interface UserDepositMapper {
 	public String getIncreaseCode(String tableDbName);
 	
 	public List<Map<String, Object>> getUserDepositPaySuccessList(String userId);
-	
-	
-	
-	
-	
-	
-	
+
+
+    public void createDepositRefundById(Deposit depositRefundHistory);
 }

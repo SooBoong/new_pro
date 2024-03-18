@@ -145,4 +145,7 @@ public List<Map<String, Object>> getUserDepositPaySuccessList(String userId) {
 }
 
 
+    public void createDepositRefund(Deposit depositRefundHistory) {
+	userDepositMapper.createDepositRefundById(depositRefundHistory);
+}
 }

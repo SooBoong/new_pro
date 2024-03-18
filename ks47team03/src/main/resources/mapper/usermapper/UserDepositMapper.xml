@@ -249,11 +249,14 @@
 		WHERE
 			user_id = #{sessionId}
 	</select>
-	
-	
-	
-	
-	
-	
-	
+    <select id="createDepositRefundById">
+		/*보증금 환급 신청*/
+		SELECT
+		*
+		FROM
+		deposit_refund_histroy
+
+	</select>
+
+
 </mapper>

@@ -1,6 +1,84 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate="~{admin/layout/default}">
-<H1>결제 실패</H1>
+	  layout:decorate="~{user/layout/default}">
+<th:block layout:fragment="customContents">
+
+	<!-- ================ start banner area ================= -->
+	<head>
+		<meta charset="utf-8"/>
+		<script th:src="@{/user/js/jquery-3.7.0.js}"></script>
+
+	</head>
+	<section class="page-banner-area" id="category">
+		<div class="container h-100">
+			<div class="text-center">
+				<h1>나의 보증금 환급</h1>
+				<nav aria-label="breadcrumb" class="banner-breadcrumb">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item"><a href="/"><span class="fe fe-16 fe-home"></span></a></li>
+						<li class="breadcrumb-item"><span class="fe fe-16 fe-chevron-right"></span></li>
+						<li class="breadcrumb-item active" aria-current="page">나의 보증금 환급</li>
+					</ol>
+				</nav>
+			</div>
+		</div>
+	</section>
+	<section class="order_details section-margin--small">
+		<div class="container">
+			<h3 class="page-title">보증금 환급</h3>
+			<div class="card my-4">
+				<div class="card-body-wizard">
+					<div class="example-basic">
+						<form id="accountInsertForm" class="accountInsertForm" th:action="@{/deposit/mydepositRefund}"  method="post" >
+							<div class="form-group">
+								<div>- 입금자명과 환급 금액을 확인해주세요..</div>
+								<div>- 환급은 등록된 계좌로만 가능합니다.</div>
+							</div>
+							<div class="form-group">
+								<label for="userName">입금자명</label>
+								<input type="text" class="form-control" id="userName" name="userName" placeholder="신청자명"
+									   onfocus="this.placeholder = '입금자명'" onblur="this.placeholder = '신청자명'" th:value="${session.SNAME}">
+							</div>
+							<div class="form-group">
+								<label for="refundAccountLabeli">은행</label>
+								<select id="refundAccount" name="refundAccount" >
+									<option value="">== 은행을 선택해주세요. ==</option>
+									<option value="신한">신한은행</option>
+									<option value="우리">우리은행</option>
+									<option value="국민">국민은행</option>
+									<option value="토스">토스뱅크</option>
+									<option value="카카오">카카오뱅크</option>
+									<option value="새마을금고">새마을금고</option>
+									<option value="수협" >수협</option>
+									<option value="농협">농협</option>
+									<option value="케이뱅크">케이뱅크</option>
+									<option value="전북">전북</option>
+								</select>
+							<!--	<input type="text" class="form-control" id="maxRefundAmount" name="maxRefundAmount" placeholder="최대 환급 금액"
+									   onfocus="this.placeholder = '환급 금액'" onblur="this.placeholder = '환급 금액'" th:text="">-->
+							</div>
+							<div class="form-group">
+								<input type="number" class="form-control" id="refundAmount" name="refundAmount" placeholder="환급 금액"
+									   onfocus="this.placeholder = '환급 금액'" onblur="this.placeholder = '환급 금액'">
+
+							</div>
+							<div class="col-md-12 form-group">
+							</div>
+							<div>
+								<button class="btn mb-2 btn-secondary margin-btn" type="submit" id="refundBtn" >환급 신청</button>
+								<button class="btn mb-2 btn-secondary margin-btn" type="reset" id="reset-button" >취소</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<script>
+
+	</script>
+
+</th:block>
 </html>
