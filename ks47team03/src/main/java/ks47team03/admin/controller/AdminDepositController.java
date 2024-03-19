@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpSession;
+import ks47team03.user.dto.Deposit;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -61,24 +62,36 @@ public class AdminDepositController {
 	@SuppressWarnings("unchecked")
 	@GetMapping("/depositPayManage")
 	public String depositPayManage(@RequestParam(value="currentPage", required = false ,defaultValue = "1")int currentPage,
+								   String depositSearch,
+								   String depositSearchText,
 								   Model model) {
-		Map<String,Object> resultMap = depositService.getDepositPayList(currentPage);
+		Map<String,Object> resultMap = depositService.getDepositPayList(currentPage, depositSearch, depositSearchText);
 		int lastPage = (int)resultMap.get("lastPage");
+
 		List<Map<String,Object>> depositPayList = (List<Map<String,Object>>)resultMap.get("depositPayList");
 		log.info("depositPayList:{}",depositPayList);
-		model.addAttribute("title","보증금 결제 관리");
+
 		int startPageNum = (int) resultMap.get("startPageNum");
 		int endPageNum = (int) resultMap.get("endPageNum");
 
+
+
 		model.addAttribute("title","보증금 결제 관리");
+		model.addAttribute("depositSearch",depositSearch);
+		model.addAttribute("depositSearchText",depositSearchText);
+
 		model.addAttribute("currentPage", currentPage);
 		model.addAttribute("lastPage", lastPage);
 		model.addAttribute("depositPayList", depositPayList);
 		model.addAttribute("startPageNum", startPageNum);
 		model.addAttribute("endPageNum", endPageNum);
 
+
 		return "admin/deposit/depositPayManage";
 	}
+
+
+
 
 	//보증금 환급 관리
 	@SuppressWarnings("unchecked")
@@ -102,6 +115,7 @@ public class AdminDepositController {
 
 		return "admin/deposit/depositRefundManage";
 	}
+
 
 
 	// 보증금 기준 관리 조회

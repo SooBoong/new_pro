@@ -14,7 +14,16 @@
                 <div class="col-md-12">
                   <div class="card shadow">
                     <div class="card-body">
-                      <!-- table -->
+						<form name="depositSearchForm" action="">
+							<select name="depositSearch" id="depositSearch">
+								<option value="userId">아이디</option>
+								<option value="paymentMethod">결제방법</option>
+								<option value="codeMiddleType">상태</option>
+							</select>
+							<input type="text" name="depositSearchText" id="depositSearchText">
+							<button type="submit">검색</button>
+						</form>
+							<!-- table -->
                       <table class="table datatables table-hover" id="dataTable-1">
                       <thead>
                           <tr>

@@ -249,14 +249,28 @@
 		WHERE
 			user_id = #{sessionId}
 	</select>
-    <select id="createDepositRefundById">
-		/*보증금 환급 신청*/
-		SELECT
-		*
-		FROM
-		deposit_refund_histroy
-
-	</select>
+    <insert id="createDepositRefundById" parameterType="Deposit">
+		INSERT INTO deposit_refund_history
+			VALUES ((SELECT
+						deposit_refund_history_code
+					 FROM
+						(SELECT
+							CASE WHEN
+								COUNT(*) = 0 THEN 'deposit_refund_history_code1'
+							ELSE
+								CONCAT('deposit_refund_history_code',
+								MAX(CAST(SUBSTRING_INDEX(deposit_refund_history_code,'code', -1) AS UNSIGNED))+1)
+							END AS deposit_refund_history_code
+						FROM
+							deposit_refund_history)sub_sc)
+		,#{userId}
+		,#{userName}
+		,#{bankName}
+		,#{accountNumber}
+		,#{depositRefundApply}
+		,'adminid001'
+		,CURDATE());
+	</insert>
 
 
 </mapper>

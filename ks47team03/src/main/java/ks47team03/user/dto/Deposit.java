@@ -27,6 +27,9 @@ public class Deposit {
 	private String accountNumber;
 	private int depositRefundApply;
 	private int depositRefundResult;
-	private String depositNmae;
+	private String depositName;
 	private String virtualAccount;
+	private String depositSearchForm;
+	private String depositSearchText;
+	private String depositSearch;
 }	

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ks47team03.user.dto.Deposit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -110,13 +111,13 @@ public class AdminDepositService {
 
 
 	//보증금 결제 관리
-	public Map<String,Object> getDepositPayList(int currentPage) {
+	public Map<String,Object> getDepositPayList(int currentPage, String depositSearch, String depositSearchText ) {
 		int rowPerPage = 16;
 
 		//페이지 계산(시작될 행의 인덱스)
 		int startIndex = (currentPage-1)*rowPerPage;
 
-		double rowsCount = adminDepositMapper.getDepositPayListCount();
+		double rowsCount = adminDepositMapper.getDepositPayListCount(depositSearch,depositSearchText);
 
 		int lastPage = (int) Math.ceil(rowsCount/rowPerPage);
 		//Math.ceil 올림 처리
@@ -139,6 +140,8 @@ public class AdminDepositService {
 		Map<String,Object> paramMap = new HashMap<String,Object>();
 		paramMap.put("startIndex", startIndex);
 		paramMap.put("rowPerPage", rowPerPage);
+		paramMap.put("depositSearch", depositSearch);
+		paramMap.put("depositSearchText", depositSearchText);
 		log.info("paramMap:{}",paramMap);
 
 
@@ -264,7 +267,7 @@ public class AdminDepositService {
 		return false;
 		
 	}
-	
-	
-	
+
+
+
 }

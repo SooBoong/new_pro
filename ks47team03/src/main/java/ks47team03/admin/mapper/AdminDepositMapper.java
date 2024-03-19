@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import ks47team03.admin.dto.AdminPoint;
+import ks47team03.user.dto.Deposit;
 import org.apache.ibatis.annotations.Mapper;
 
 import ks47team03.user.dto.Cup;
@@ -49,5 +50,8 @@ public interface AdminDepositMapper {
 	//중복확인(미완)
 	public boolean depositStandardUseCheck(String depositStandardUse);
 
+	public int getDepositPayListCount(String depositSearch, String depositSearchText);
 
+
+	;
 }

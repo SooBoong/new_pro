@@ -47,10 +47,10 @@
 		VALUES
 		<foreach collection="list" item="cup" separator=",">
 			((SELECT
-				cup_discard_manage_code
+			cup_discard_manage_code
 			FROM
-				(SELECT
-						    CASE
+			(SELECT
+			CASE
 						    WHEN COUNT(*) = 0 THEN 'cup_discard_manage_code1'
 						    ELSE 
 						        CONCAT('cup_discard_manage_code', 

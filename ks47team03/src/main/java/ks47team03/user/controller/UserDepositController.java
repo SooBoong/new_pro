@@ -209,22 +209,26 @@ public class UserDepositController {
     //보증금 결제1
     @PostMapping("/mydepositPay")   
 	public String createDepositPay(Deposit depositPayHistory) {
-		userDepositService.createDepositPay(depositPayHistory);		
+		userDepositService.createDepositPay(depositPayHistory);
 		return "redirect:depositCheckSuccess";
 	}
     
     
     //보증금 환급
 	@GetMapping("/mydepositRefund")
-	public String depoistRefundGet(Model model, HttpSession session) {
+	public String depositRefundGet(Model model, HttpSession session) {
 		String userId = (String) session.getAttribute("SID");
-		model.addAttribute("title", "보증금 환급");
-		model.addAttribute("userId", userId);
+		String userName = (String) session.getAttribute("NAME");
+		Deposit userDeposit = userDepositService.getUserDeposit(userId);
 
+		int currentDeposit = userDeposit.getCurrentHoldingDeposit();
+		model.addAttribute("userId", userId);
+		model.addAttribute("userName", userName);
+		model.addAttribute("currentDeposit", currentDeposit);
 		return "user/deposit/mydepositRefund";
 	}
 	@PostMapping("mydepositRefund")
-	public String depoistRefundPost(Deposit depositRefundHistory){
+	public String depositRefundPost(Deposit depositRefundHistory){
 		userDepositService.createDepositRefund(depositRefundHistory);
 		return "redirect:mydepositRefund";
 	}
