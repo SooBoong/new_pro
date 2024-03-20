@@ -159,7 +159,7 @@ public class AdminDepositController {
 	@PostMapping("/createDepositStandard")
     public String createDepositStandardPost(DepositStandard depositStandard) {
         depositService.createDepositStandard(depositStandard);
-
+		log.info("depositStandard",depositStandard);
         return "redirect:depositStandard";
 	}
 	

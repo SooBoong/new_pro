@@ -155,7 +155,7 @@
 				AND DPH.payment_method LIKE CONCAT('%',#{depositSearchText},'%')
 			</when>
 			<when test="depositSearch == 'codeMiddleType'">
-				AND DPH.code_middle_type LIKE CONCAT('%',#{depositSearchText},'%')
+				AND SC.code_middle_type LIKE CONCAT('%',#{depositSearchText},'%')
 			</when>
 		</choose>
 
@@ -171,18 +171,22 @@
 		COUNT(*)
 		FROM
 		deposit_pay_histroy AS DPH
-		where 1=1
-		<choose>
-			<when test="depositSearch =='userId'">
+		LEFT JOIN
+		static_code AS SC
+		ON
+		DPH.static_code = SC.static_code
+		<where>
+			<if test="depositSearch =='userId'">
 				AND DPH.user_id LIKE CONCAT('%',#{depositSearchText},'%')
-			</when>
-			<when test="depositSearch == 'paymentMethod'">
+			</if>
+			<if test="depositSearch == 'paymentMethod'">
 				AND DPH.payment_method LIKE CONCAT('%',#{depositSearchText},'%')
-			</when>
-			<when test="depositSearch == 'codeMiddleType'">
-				AND DPH.code_middle_type LIKE CONCAT('%',#{depositSearchText},'%')
-			</when>
-		</choose>
+			</if>
+			<if test="depositSearch == 'codeMiddleType'">
+				AND SC.code_middle_type LIKE CONCAT('%',#{depositSearchText},'%')
+			</if>
+		</where>
+
 
 	</select>
 
