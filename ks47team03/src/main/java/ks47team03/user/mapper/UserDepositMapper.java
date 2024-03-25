@@ -3,11 +3,13 @@ package ks47team03.user.mapper;
 import java.util.List;
 import java.util.Map;
 
+import ks47team03.user.dto.TossPayment;
 import org.apache.ibatis.annotations.Mapper;
 
 import ks47team03.user.dto.Account;
 import ks47team03.user.dto.Deposit;
 import ks47team03.user.dto.Point;
+import org.json.simple.JSONObject;
 
 @Mapper
 public interface UserDepositMapper {
@@ -30,4 +32,7 @@ public interface UserDepositMapper {
 
 
     public void createDepositRefundById(Deposit depositRefundHistory);
+
+
+	public void payByTossPaymentsById(TossPayment tossPayment);
 }

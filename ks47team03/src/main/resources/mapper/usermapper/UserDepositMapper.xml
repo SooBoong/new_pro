@@ -272,5 +272,16 @@
 		,CURDATE());
 	</insert>
 
+	<select id="payByTossPaymentsById">
+		/* */
+		select
+		*
+		from
+		payment
+
+
+
+	</select>
+
 
 </mapper>

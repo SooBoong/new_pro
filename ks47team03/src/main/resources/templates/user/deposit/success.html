@@ -27,6 +27,7 @@
               <th scope="col">주문번호</th>
               <th scope="col">결제 금액</th>
               <th scope="col">계좌주명</th>
+              <th scope="col">계좌주명sdfd</th>
             </tr>
             </thead>
             <tbody>
@@ -35,6 +36,7 @@
                 <td th:id="paymentKey"></td>
                 <td th:id="amount"></td>
                 <td th:id="orderId"></td>
+                <td th:id="orderName"></td>
               </tr>
             </th:block>
             </tbody>
@@ -65,6 +67,9 @@
         });
 
         const json = await response.json();
+        const orderNameElement =document.getElementById("orderName");
+        orderNameElement.textContent = json.orderName;
+
 
         if (!response.ok) {
           // TODO: 결제 실패 비즈니스 로직을 구현하세요.
@@ -76,13 +81,17 @@
         console.log(json);
       }
       confirm();
+
+
       const paymentKeyElement = document.getElementById("paymentKey");
       const orderIdElement = document.getElementById("orderId");
       const amountElement = document.getElementById("amount");
 
+
       orderIdElement.textContent = urlParams.get("orderId");
       amountElement.textContent = urlParams.get("amount");
       paymentKeyElement.textContent =urlParams.get("paymentKey");
+
 
 
 

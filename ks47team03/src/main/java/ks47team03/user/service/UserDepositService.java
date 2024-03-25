@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ks47team03.user.dto.TossPayment;
+import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 
 import ks47team03.user.dto.Account;
@@ -148,4 +150,16 @@ public List<Map<String, Object>> getUserDepositPaySuccessList(String userId) {
     public void createDepositRefund(Deposit depositRefundHistory) {
 	userDepositMapper.createDepositRefundById(depositRefundHistory);
 }
+
+	public void payByTossPayments(TossPayment tossPayment) {
+	userDepositMapper.payByTossPaymentsById(tossPayment);
+
+	}
+
+
+
+
+    /*public void createDepositTossPay(list) {
+	userDepositMapper.createDepositTossPayById(jsonObject);
+    }*/
 }

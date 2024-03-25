@@ -7,16 +7,19 @@ import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import com.fasterxml.jackson.databind.ser.Serializers;
+
+import ch.qos.logback.classic.Logger;
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.servlet.http.HttpServletRequest;
+import ks47team03.user.dto.TossPayment;
+
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +32,10 @@ import ks47team03.user.dto.Point;
 import ks47team03.user.mapper.UserDepositMapper;
 import ks47team03.user.service.UserDepositService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.client.RestOperations;
+import org.springframework.web.client.RestTemplate;
+
+import static javax.crypto.Cipher.SECRET_KEY;
 
 @Slf4j
 @Controller
@@ -38,30 +45,29 @@ public class UserDepositController {
 	// 의존성 주입
 	private final UserDepositService userDepositService;
 
+	private final String SECRET_KEY = "test_sk_LBa5PzR0ArngwDn2wKx8vmYnNeDM";
+
+
 
 	public UserDepositController(UserDepositService userDepositService) {
 		this.userDepositService = userDepositService;
 	}
 
 	@RequestMapping(value = "/confirm")
-	public ResponseEntity<JSONObject> confirmPayment( Model model,
-													  @RequestBody String jsonBody) throws Exception {
-
+	public ResponseEntity<JSONObject> confirmPayment( Model model, HttpSession session,
+													  @RequestBody String jsonBody, TossPayment tossPayment) throws Exception {
+	 String userName= (String) session.getAttribute("SNAME");
 		JSONParser parser = new JSONParser();
 		String orderId;
 		String amount;
 		String paymentKey;
-		String method;
-		String transactionAt;
-		String orderName;
+
 		try {
 			JSONObject requestData = (JSONObject) parser.parse(jsonBody);
 			paymentKey = (String) requestData.get("paymentKey");
 			orderId = (String) requestData.get("orderId");
 			amount = (String) requestData.get("amount");
-			method = (String) requestData.get("method");
-			transactionAt = (String) requestData.get("transactionAt");
-			orderName = (String) requestData.get("orderName");
+
 		} catch (ParseException e) {
 			throw new RuntimeException(e);
 		}
@@ -70,12 +76,8 @@ public class UserDepositController {
 		obj.put("orderId", orderId);
 		obj.put("amount", amount);
 		obj.put("paymentKey", paymentKey);
-		obj.put("method", method);
-		obj.put("transactionAt", transactionAt);
-		obj.put("orderName", orderName);
-		log.info("jsonObj = {}", obj);
-		log.info("obj");
 
+		log.info(String.valueOf(obj));
 		String tossPaySecretKey = "test_sk_LBa5PzR0ArngwDn2wKx8vmYnNeDM";
 		Base64.Encoder encoder = Base64.getEncoder();
 		byte[] encodedBytes = encoder.encode((tossPaySecretKey + ":").getBytes("UTF-8"));
@@ -90,27 +92,92 @@ public class UserDepositController {
 
 		OutputStream outputStream = connection.getOutputStream();
 		outputStream.write(obj.toString().getBytes("UTF-8"));
-
 		int code = connection.getResponseCode();
 		boolean isSuccess = code == 200 ? true : false;
 
 		InputStream responseStream = isSuccess ? connection.getInputStream() : connection.getErrorStream();
-
 		Reader reader = new InputStreamReader(responseStream, StandardCharsets.UTF_8);
 		JSONObject jsonObject = (JSONObject) parser.parse(reader);
-		log.info("parserJsonObj = {}", jsonObject);
 		responseStream.close();
+
+		model.addAttribute("responseStr", jsonObject.toJSONString());
+		System.out.println(jsonObject.toJSONString());
+
+		if (((String) jsonObject.get("method")).equals("가상계좌")) {
+				tossPayment.setMethod("가상계좌");
+				tossPayment.setVirtualAccountNumber((String) ((JSONObject) jsonObject.get("virtualAccount")).get("accountNumber"));
+				tossPayment.setCustomerName(((String)  ((JSONObject)jsonObject.get("virtualAccount")).get("customerName")));
+				tossPayment.setVirtualBank(((String)  ((JSONObject)jsonObject.get("virtualAccount")).get("bank")));
+				tossPayment.setAmount(((String)  ((JSONObject)jsonObject.get("virtualAccount")).get("totalAmount")));
+
+		} else if (((String) jsonObject.get("method")).equals("계좌이체")) {
+			model.addAttribute("bank", (String) ((JSONObject) jsonObject.get("transfer")).get("bank"));
+
+		}else {
+			model.addAttribute("code", (String) jsonObject.get("code"));
+			model.addAttribute("message", (String) jsonObject.get("message"));
+		}
+		tossPayment.setOrderId((String) jsonObject.get("orderId"));
+		tossPayment.setOrderName((String) jsonObject.get("orderName"));
+
+		log.info("test"+String.valueOf(tossPayment));
+		this.userDepositService.payByTossPayments(tossPayment);
 
 
 		return ResponseEntity.status(code).body(jsonObject);
 	}
 
+
+
+
+
 	/*@PostMapping*/
 
 	@RequestMapping(value = "/success", method = RequestMethod.GET)
-	public String tossPaySuccess(HttpServletRequest request, Model model) throws Exception{
-		return "user/deposit/success";
-	}
+	public String tossPaySuccess(HttpServletRequest request, Model model
+
+
+
+
+
+			/*@RequestParam String paymentKey, @RequestParam String orderId, @RequestParam Long amount*/) throws Exception{
+
+/*
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", "Basic" + Base64.getEncoder().encodeToString((SECRET_KEY+":").getBytes()).getBytes());
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		Map<String, String> payloadMap = new HashMap<>();
+		payloadMap.put("orderId", orderId);
+		payloadMap.put("amount", String.valueOf(amount));
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		String requestBody = (String) objectMapper.writeValueAsString(payloadMap);
+
+		HttpEntity<String> httpEntity = new HttpEntity<>(requestBody,headers);
+
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<JsonNode> responseEntity = restTemplate.postForEntity(
+				"https://api.tosspayment.com/v1/payments/" + paymentKey, httpEntity, JsonNode.class);
+
+
+		if(responseEntity.getStatusCode() == HttpStatus.OK){
+			JsonNode successNode = responseEntity.getBody();
+			model.addAttribute("orderId",successNode.get("orderId").asText());
+			String secret = successNode.get("secret").asText();
+			userDepositService.payByTossPayments(tossPayment);
+			return "user/deposit/success";
+		}else {
+			JsonNode failNode = responseEntity.getBody();
+			model.addAttribute("message", failNode.get("message").asText());
+			model.addAttribute("code",failNode.get("code").asText());
+			return "user/deposit/fail";
+		}
+*/
+
+
+
+	return "user/deposit/success";}
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String index(HttpServletRequest request, Model model) throws Exception {
