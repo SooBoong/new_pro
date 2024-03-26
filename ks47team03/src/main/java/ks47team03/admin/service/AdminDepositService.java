@@ -259,12 +259,14 @@ public class AdminDepositService {
 	}
 
 	public int modifyCheck(int waitingDepositPeriod) {
-		adminDepositMapper.modifyCheck(waitingDepositPeriod);
-		return waitingDepositPeriod;
+		int result =adminDepositMapper.modifyCheck(waitingDepositPeriod);
+		return result;
 	}
 	
-	public boolean depositStandardUseCheck(String depositStandardUse) {
-		return false;
+	public boolean depositStandardUseCheck(String waitingDepositStandardCode) {
+		boolean result =adminDepositMapper.depositStandardUseCheck(waitingDepositStandardCode);
+		log.info("서비스:" +result);
+		return result;
 		
 	}
 

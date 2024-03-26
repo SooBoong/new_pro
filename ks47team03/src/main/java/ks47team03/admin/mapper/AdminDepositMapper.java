@@ -48,7 +48,7 @@ public interface AdminDepositMapper {
 	public int modifyCheck(int waitingDepositPeriod);
 	
 	//중복확인(미완)
-	public boolean depositStandardUseCheck(String depositStandardUse);
+	public boolean depositStandardUseCheck(String waitingDepositStandardCode);
 
 	public int getDepositPayListCount(String depositSearch, String depositSearchText);
 

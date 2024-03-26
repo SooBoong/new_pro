@@ -19,14 +19,22 @@
 
 
 <select id="depositStandardUseCheck" resultType="boolean" parameterType="String">
-		/* 아이디 중복체크 */
-		SELECT 
-			IF(COUNT(wds.deposit_standard_use) > 0, 1, 0)
-		FROM
-			waiting_deposit_standard AS wds
-		WHERE 
-			wds.deposit_standard_use = #{deposit_standard_use};
-	</select>
+	/* 기준 사용 유무 체크 */
+	<![CDATA[
+	SELECT
+		IF((COUNT(*) - (SELECT
+						COUNT(*)
+				   FROM
+						waiting_deposit_standard
+	               WHERE
+						deposit_standard_use ='Y')) = 0, 1, 0)
+        ]]>
+	FROM
+		waiting_deposit_standard AS WDS
+	WHERE
+		WDS.waiting_deposit_standard_code = #{waitingDepositStandardCode};
+
+</select>
 
 
 

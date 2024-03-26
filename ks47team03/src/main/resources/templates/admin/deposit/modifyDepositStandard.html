@@ -89,24 +89,42 @@
 				
     				
 			 $(document).ready(function(){
-                $('#modifyDepositStandardForm').on('submit', function(e){
-                    
-                    let waitingDepositPeriodVal = $('#waitingDepositPeriod').val();
-                    let depositStandardUseVal = $('#depositStandardUse').val();
-        
-                    
-                    if (waitingDepositPeriodVal == null || waitingDepositPeriodVal < '0'){             
-                        alert('기간은 0 이상의 일수로 선택해 주세요');
+                $('#modifyDepositStandardForm').on('submit', function(e) {
+
+                  let waitingDepositPeriodVal = $('#waitingDepositPeriod').val();
+                  let depositStandardUseVal = $('#depositStandardUse').val();
+                  let waitingDepositStandardCode = $('#waitingDepositStandardCode').val();
+
+                  if (waitingDepositPeriodVal == null || waitingDepositPeriodVal < '0') {
+                    alert('기간은 0 이상의 일수로 선택해 주세요');
+                    return false;
+                  } else if (depositStandardUseVal == null) {
+                    alert('사용 일수를 입력해 주세요');
+                    return false;
+                  }
+                  if (depositStandardUseVal === 'Y') {
+                    $.ajax({
+                      url: "depositStandardUseCheck",
+                      type: "POST",
+                      data: {
+                        waitingDepositStandardCode: waitingDepositStandardCode
+                      },
+                      success: function (result) {
+                        if (result === false) {
+                          alert("이미 사용중 입니다.");
+                          return false;
+                        }
+                        console.log(result);
+                      },
+                      error: function () {
+                        alert('데이터를 가져오는 중에 오류가 발생했습니다.');
                         return false;
-                    }else                    	                   
-                    if(depositStandardUseVal == null){
-                        alert('사용 일수를 입력해 주세요');
-                        return false;
-                    }
-				})
-			})
-				
-				
+                      }
+                    });
+                  }
+                });
+             });
+
            /* 선택한 기준 수정전 값 ajax  */	
 			$(document).ready(function() {
 				let formData = {
@@ -118,7 +136,7 @@
 						type: "POST",						
 						data:formData,		
 						success: function(result) {							
-							$("#name").text('지금 선택한 수정전 값은'+ result+'일 입니다');
+							$("#name").text('지금 사용중인 값은'+ result+'일 입니다');
 						},		
 						error:function(){
 							alert('가져오지 못했습니다.');

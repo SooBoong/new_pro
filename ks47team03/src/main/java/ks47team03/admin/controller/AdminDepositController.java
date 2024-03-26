@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpSession;
-import ks47team03.user.dto.Deposit;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 
 import ks47team03.admin.mapper.AdminDepositMapper;
 import ks47team03.admin.service.AdminDepositService;
@@ -183,9 +183,10 @@ public class AdminDepositController {
 	// ajax 기준 체크 
 	@PostMapping("/modifyCheck")
 	@ResponseBody
-	public int modifyCheck(@RequestParam(value="waitingDepositPeriod")int waitingDepositPeriod) {
-		log.info("수정 체크:{}",waitingDepositPeriod);		
-		return waitingDepositPeriod;
+	public int modifyCheck(@RequestParam(value="waitingDepositPeriod")int waitingDepositPeriod, Model model) {
+		log.info("수정 체크:{}",waitingDepositPeriod);
+		int userDepositStandardPeriod =depositService.modifyCheck(waitingDepositPeriod);
+		return userDepositStandardPeriod;
 	}
 
 	
@@ -213,13 +214,14 @@ public class AdminDepositController {
 	
 	@PostMapping("/depositStandardUseCheck")
 	@ResponseBody
-	public boolean depositStandardUseCheck(@RequestParam(value="depositStandardUse") String depositStandardUse) {
-		log.info("기준 사용 유무 중복체크:{}", depositStandardUse);
-		boolean result = depositMapper.depositStandardUseCheck(depositStandardUse);
+	public boolean depositStandardUseCheck(@RequestParam(value ="waitingDepositStandardCode") String waitingDepositStandardCode) {
+		boolean result = depositService.depositStandardUseCheck(waitingDepositStandardCode);
+
 		log.info("기준 사용 유무 중복체크 결과값:{}", result);
+
 		return result;
 	} 
-	
+
 	
 	
 	

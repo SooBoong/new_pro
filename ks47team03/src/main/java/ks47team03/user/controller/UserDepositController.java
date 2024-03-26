@@ -107,8 +107,8 @@ public class UserDepositController {
 				tossPayment.setMethod("가상계좌");
 				tossPayment.setVirtualAccountNumber((String) ((JSONObject) jsonObject.get("virtualAccount")).get("accountNumber"));
 				tossPayment.setCustomerName(((String)  ((JSONObject)jsonObject.get("virtualAccount")).get("customerName")));
-				tossPayment.setVirtualBank(((String)  ((JSONObject)jsonObject.get("virtualAccount")).get("bank")));
-				tossPayment.setAmount(((String)  ((JSONObject)jsonObject.get("virtualAccount")).get("totalAmount")));
+				tossPayment.setVirtualBank((String)  ((JSONObject)jsonObject.get("virtualAccount")).get("bank"));
+				tossPayment.setAmount((String)  ((JSONObject)jsonObject.get("virtualAccount")).get("totalAmount"));
 
 		} else if (((String) jsonObject.get("method")).equals("계좌이체")) {
 			model.addAttribute("bank", (String) ((JSONObject) jsonObject.get("transfer")).get("bank"));
