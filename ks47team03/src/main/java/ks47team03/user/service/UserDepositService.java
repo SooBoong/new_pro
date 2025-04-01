@@ -4,12 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ks47team03.user.dto.TossPayment;
+/*import ks47team03.user.dto.TossPayment;*/
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 
 import ks47team03.user.dto.Account;
 import ks47team03.user.dto.Deposit;
+import ks47team03.user.dto.TossPayment;
 import ks47team03.admin.mapper.AdminCommonMapper;
 import ks47team03.user.mapper.UserDepositMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -151,10 +152,22 @@ public List<Map<String, Object>> getUserDepositPaySuccessList(String userId) {
 	userDepositMapper.createDepositRefundById(depositRefundHistory);
 }
 
-	public void payByTossPayments(TossPayment tossPayment) {
-	userDepositMapper.payByTossPaymentsById(tossPayment);
-
+	public void payByTossPayments1(TossPayment tossPayment) {
+		// TODO Auto-generated method stub
+		
 	}
+
+	public void payByTossPayments(TossPayment tossPayment) {
+		// TODO Auto-generated method stub
+		
+	}
+
+/*
+ * public void payByTossPayments(TossPayment tossPayment) {
+ * userDepositMapper.payByTossPaymentsById(tossPayment);
+ * 
+ * }
+ */
 
 
 

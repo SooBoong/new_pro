@@ -25,7 +25,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpSession;
-import ks47team03.admin.mapper.AdminCommonMapper;
 import ks47team03.user.dto.Account;
 import ks47team03.user.dto.Deposit;
 import ks47team03.user.dto.Point;
