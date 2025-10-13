@@ -15,7 +15,7 @@ import org.json.simple.JSONObject;
 public interface UserDepositMapper {
 
 	public List<Map<String,Object>> getUserDepositManageList(Map<String,Object>paramMap);
-	public int getUserDepositManageListCount();
+	public int getUserDepositManageListCount(String userId);
 	
 	public List<Map<String,Object>> getUserDepositPayList(Map<String,Object>paramMap);
 	public int getUserDepositPayListCount(String userId);

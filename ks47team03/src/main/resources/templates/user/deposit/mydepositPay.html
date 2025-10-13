@@ -196,14 +196,17 @@
 								<a class="pages btn mb-2 btn-secondary" th:href="@{/deposit/mydepositPay}">처음으로</a>
 								<a class="btn mb-2 btn-secondary" th:if="${currentPage>1}" th:href="@{/deposit/mydepositPay(currentPage=${currentPage-1})}">이전</a>
 								<label class="btn mb-2 btn-secondary" th:unless="${currentPage>1}">이전</label>
-								<th:block th:each="num : ${#numbers.sequence(startPageNum,endPageNum)}" >
-									<a class="btn mb-2 btn-secondary" th:if="${currentPage != num}" th:href="@{/deposit/mydepositPay(currentPage=${num})}" th:text="${num}"></a>
-									<label class="btn mb-2 btn-secondary" th:if="${currentPage == num}" th:text="${num}"></label>
+									<div class="btn-group mr-2" role="group" aria-label="First group">
+										<th:block th:each="num : ${#numbers.sequence(startPageNum,endPageNum)}" >
+											
+											<label class="btn mb-2 btn-secondary" th:if="${currentPage == num}" th:text="${num}"></label>
+											<a class="btn mb-2 btn-secondary" th:if="${currentPage != num} and ${endPageNum != 0} " th:href="@{/deposit/mydepositPay(currentPage=${num})}" th:text="${num}"></a>
 								</th:block>
 				</div>
 				<a class="btn mb-2 btn-secondary" th:if="${currentPage<lastPage}" th:href="@{/deposit/mydepositPay(currentPage=${currentPage+1})}">다음</a>
 				<label class="btn mb-2 btn-secondary" th:unless="${currentPage<lastPage}">다음</label>
 				<a class="pages btn mb-2 btn-secondary" th:href=@{/deposit/mydepositPay(currentPage=${lastPage})}>마지막으로</a>
+					<a class="pages btn mb-2 btn-secondary" th:unless="${lastPage == 0}" th:href=@{/deposit/mydeposit(currentPage=${lastPage})}>마지막으로</a>
 				</td>
 				</tr>
 				</tfoot>

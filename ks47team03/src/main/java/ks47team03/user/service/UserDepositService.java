@@ -34,7 +34,7 @@ public Map<String,Object> getUserDepositManageList(String userId, int currentPag
 	//페이지 계산(시작될 행의 인덱스)
 	int startIndex = (currentPage-1)*rowPerPage;
 	
-	double rowsCount = userDepositMapper.getUserDepositManageListCount();
+	double rowsCount = userDepositMapper.getUserDepositManageListCount(userId);
 	
 	int lastPage = (int) Math.ceil(rowsCount/rowPerPage);
 	//Math.ceil 올림 처리
@@ -113,6 +113,9 @@ public Map<String,Object>getUserDepositPayList(String userId, int currentPage) {
 	paramMap.put("startPageNum", startPageNum);
 	paramMap.put("endPageNum", endPageNum);
 	paramMap.put("userDepositPayList", userDepositPayList);
+	
+	System.out.println("startPageNum: "+startPageNum);
+	System.out.println("endPageNum: "+endPageNum);
 	return paramMap;
 }
 

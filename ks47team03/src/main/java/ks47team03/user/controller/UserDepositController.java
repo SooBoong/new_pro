@@ -243,7 +243,8 @@ public class UserDepositController {
 		model.addAttribute("currentPage", currentPage);
 		model.addAttribute("lastPage", lastPage);
 		model.addAttribute("startPageNum", startPageNum);
-		model.addAttribute("endPageNum", endPageNum);	
+		model.addAttribute("endPageNum", endPageNum);
+		System.out.println("userId: "+ userId);
 		return "user/deposit/mydeposit";
 	}
 	
