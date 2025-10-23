@@ -44,7 +44,7 @@
                     <tr>
                       <td colspan="10">
                         <button class="pages btn mb-2 btn-secondary" type="submit"id="createDepositStandardBtn">생성</button>
-                        <button class="pages btn mb-2 btn-secondary" type="reset" id="resetBtn">입력취소</button>
+                        <button class="pages btn mb-2 btn-secondary" type="button" onclick="cancelButton()">취소</button>
                       </td>
                     </tr>
                     </tbody>
@@ -67,7 +67,19 @@
         return false;
     }        
    });
+	
+	
+    function cancelButton() {
+        alert('생성을 취소했습니다.');
+        location.href ='/admin/deposit/depositStandard';
+    }
+     
  </script>
+ <script th:if="${msg}" th:inline="javascript">
+  /*<![CDATA[*/
+    alert([[${msg}]]);
+  /*]]>*/
+</script>
   
   
 </th:block>

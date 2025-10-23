@@ -6,7 +6,7 @@
 <mapper namespace="ks47team03.user.mapper.UserDepositMapper">
 	<resultMap type="Deposit" id="userDepositPayResultMap">
 		<!-- id태그는 조회시 테이블의 PK(기본키) -->
-		<id 	column="deposit_pay_histroy" 		property="depositPayHistroy"/>
+		<id 	column="deposit_pay_history" 		property="depositPayHistory"/>
 		<!-- result태그는 조회시 테이블의 일반컬럼 혹은 외래키 -->
 		<result column="user_id" 		property="userId"/>
 		<result column="charging_amount" 	property="chargingAmount"/>
@@ -35,7 +35,7 @@
 		IFNULL(dph.waiting_deposit_datetime, 0) AS waitingDepositDatetime,
 		IFNULL(dph.deposit_completion_datetime, 0) AS depositCompletionDatetime
 	FROM
-		deposit_pay_histroy AS dph
+		deposit_pay_history AS dph
 		LEFT join
 		virtual_account AS va
 		ON
@@ -91,7 +91,7 @@
 	
 	<insert id="createDepositPayById" parameterType="Deposit">	
 		INSERT
-		  INTO deposit_pay_histroy(user_id, charging_amount, payment_method, pay_application_datetime, waiting_deposit_standard_code, waiting_deposit_period, waiting_deposit_datetime, static_code, admin_id, deposit_completion_datetime, virtual_account)
+		  INTO deposit_pay_history(user_id, charging_amount, payment_method, pay_application_datetime, waiting_deposit_standard_code, waiting_deposit_period, waiting_deposit_datetime, static_code, admin_id, deposit_completion_datetime, virtual_account)
 		VALUES (						       
 		       (SELECT
 					um.user_id
@@ -143,7 +143,7 @@
 			cast(DPH.pay_application_datetime as char(20))  AS applicationDatetime,
 			cast(IFNULL(DPH.deposit_completion_datetime,'') as char(20)) AS depositCompletionDatetime			
 		FROM	
-			deposit_pay_histroy AS DPH
+			deposit_pay_history AS DPH
 			LEFT JOIN
 			virtual_account AS VA
 			ON
@@ -158,7 +158,7 @@
 			DPH.static_code = SC.static_code
 		 WHERE
 		    DPH.user_id=  #{userId}		 
-		order by length(DPH.deposit_pay_histroy),DPH.deposit_pay_histroy	
+		order by length(DPH.deposit_pay_history),DPH.deposit_pay_history	
 	
 		<if test="startIndex != null and startIndex > -1 ">
 			LIMIT #{startIndex},#{rowPerPage};
@@ -170,7 +170,7 @@
 		SELECT	
 			COUNT(*)
 		FROM	
-			deposit_pay_histroy AS DPH
+			deposit_pay_history AS DPH
 			LEFT JOIN
 			virtual_account AS VA
 			ON

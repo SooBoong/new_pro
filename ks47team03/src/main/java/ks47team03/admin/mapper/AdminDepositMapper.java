@@ -37,21 +37,28 @@ public interface AdminDepositMapper {
 
 	public DepositStandard getDepositStandardInfoById(String waitingDepositStandardCode);
 	public int modifyDepositStandard(DepositStandard depositStandard);
-
-	//보증금 기준 생성
-	public void createDepositStandardById(DepositStandard depositStandard);
+	public int modifyCheck(int waitingDepositPeriod);
+	// 기간 중복 검사
+	public int checkPeriodDuplicateExcludeSelf(Map<String, Object> params);
+	//보증금 y 사용유무 
+	public int checkUseDuplicateExcludeSelf(Map<String, Object> params);
+	public void createDepositStandard(DepositStandard depositStandard);
 	
 	//보증금 기준 삭제
 	public void deleteDepositStandardById(DepositStandard depositStandard);
-
+	public Map<String, Object> findAdminUserById(String adminId);
+	
 	//수정전 선택한 보증금 기준 
-	public int modifyCheck(int waitingDepositPeriod);
+	
 	
 	//중복확인(미완)
 	public boolean depositStandardUseCheck(String waitingDepositStandardCode);
 
 	public int getDepositPayListCount(String depositSearch, String depositSearchText);
 
+	// 기간 생성 중복 조회
+	public int isPeriodDuplicated(int waitingDepositPeriod);
+	public void createDepositStandardById(DepositStandard depositStandard);
 
 	;
 }

@@ -211,28 +211,73 @@ public class AdminDepositService {
 		return paramMap;
 	}
 
-	
-	
-	
-	/*
-	 * public int modifyDeopositStandard(DepositStandard depositStandard) {
-	 * DepositStandard depositStandardInfo =
-	 * adminDepositMapper.getDepositStandardInfoById(); return result; }
-	 */
+		
 	
 	public DepositStandard getDepositStandardInfoById(String waitingDepositStandardCode) {
 		DepositStandard depositStandardInfo = adminDepositMapper.getDepositStandardInfoById(waitingDepositStandardCode);
 		return depositStandardInfo;
 	}
 
-	public void modifyDepositStandard(DepositStandard depositStandard) {
-		adminDepositMapper.modifyDepositStandard(depositStandard);
+public String modifyDepositStandard(DepositStandard depositStandard) {
+          
+        Map<String, Object> periodParams = new HashMap<>();
+        periodParams.put("waitingDepositPeriod", depositStandard.getWaitingDepositPeriod());
+        periodParams.put("waitingDepositStandardCode", depositStandard.getWaitingDepositStandardCode());
+        
+        int periodCount = adminDepositMapper.checkPeriodDuplicateExcludeSelf(periodParams);
+        
+        if (periodCount > 0) {
+            // 다른 기준이 이미 이 '일수'를 사용 중
+            return "ERR_PERIOD_DUPLICATE";
+        }
 
-	}
-	public void deleteDepositStandard(DepositStandard depositStandard) {
-		adminDepositMapper.deleteDepositStandardById(depositStandard);
+        // --- 2. 'Y' 사용 유무 중복 검사 (자신 제외) ---
+        // 사용자가 이 기준을 'Y'(사용)로 설정하려고 할 때만 검사
+        if ("Y".equalsIgnoreCase(depositStandard.getDepositStandardUse())) {
+            
+            Map<String, Object> useParams = new HashMap<>();
+            useParams.put("waitingDepositStandardCode", depositStandard.getWaitingDepositStandardCode());
+            
+            // '나'를 제외하고 'Y'인 것이 있는지 확인
+            int useCount = adminDepositMapper.checkUseDuplicateExcludeSelf(useParams);
+            
+            if (useCount > 0) {
+                // 다른 기준이 이미 'Y'로 사용 중
+                return "ERR_USE_DUPLICATE";
+            }
+        }
+        
+        // --- 3. 모든 검증 통과: DB 업데이트 실행 ---
+        adminDepositMapper.modifyDepositStandard(depositStandard);
+        
+        return "SUCCESS";
+    }
+	
 
+
+	public String deleteDepositStandard(DepositStandard depositStandard) {
+	    
+	    String formAdminId = depositStandard.getAdminId();
+	    String formAdminPw = depositStandard.getAdminPw();
+	
+	    Map<String, Object> adminUser = adminDepositMapper.findAdminUserById(formAdminId);
+
+	    if (adminUser == null || adminUser.isEmpty()) {
+	        return "ERR_ID_NOT_FOUND"; // 아이디 없음
+	    }
+
+	    String dbAdminPw = (String) adminUser.get("adminPw");
+	    	   
+	    if (!formAdminPw.equals(dbAdminPw)) {
+	        return "ERR_PW_MISMATCH"; // 비밀번호 불일치
+	    }
+	  	    	  
+	    adminDepositMapper.deleteDepositStandardById(depositStandard);
+	    
+	    return "SUCCESS";
 	}
+
+	
 	
 	public void createDepositStandard(DepositStandard depositStandard) {
 		adminDepositMapper.createDepositStandardById(depositStandard);
@@ -270,6 +315,13 @@ public class AdminDepositService {
 		
 	}
 
+		public boolean isPeriodDuplicated(int waitingDepositPeriod) {			
+			int count = adminDepositMapper.isPeriodDuplicated(waitingDepositPeriod);
+			// count가 0보다 크면 중복된 데이터가 있다는 의미이므로 true를 반환합니다.
+			return count > 0;
+		}
+	    // ====================================================
+	
 
 
 }

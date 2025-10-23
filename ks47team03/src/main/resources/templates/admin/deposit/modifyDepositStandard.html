@@ -66,7 +66,7 @@
                               <tr>
                               <td colspan="14">
 			                     <button class="pages btn mb-2 btn-secondary" type="submit" id="modifyDepositStandardBtn" >수정</button>
-                           		<button class="pages btn mb-2 btn-secondary" type="reset" >취소</button>
+                           		<button class="pages btn mb-2 btn-secondary" type="button" onclick="cancelButton()">취소</button>
                             	</td>
                             	</tr>
                             </tbody>
@@ -84,67 +84,90 @@
           <p id="name"></p>
 	</th:block>
 		<th:block layout:fragment="customJs">
-		<script th:src="@{/js/jquery-3.7.0.js}"></script>
-    	<script type="text/javascript" th:inline="javascript">
-				
-    				
-			 $(document).ready(function(){
-                $('#modifyDepositStandardForm').on('submit', function(e) {
+    <script th:src="@{/js/jquery-3.7.0.js}"></script>
+   <script type="text/javascript" th:inline="javascript">
 
-                  let waitingDepositPeriodVal = $('#waitingDepositPeriod').val();
-                  let depositStandardUseVal = $('#depositStandardUse').val();
-                  let waitingDepositStandardCode = $('#waitingDepositStandardCode').val();
+        // [수정] 원본 값을 저장할 변수 2개 선언
+        let originalPeriodValue;
+        let originalUseValue;
 
-                  if (waitingDepositPeriodVal == null || waitingDepositPeriodVal < '0') {
-                    alert('기간은 0 이상의 일수로 선택해 주세요');
-                    return false;
-                  } else if (depositStandardUseVal == null) {
-                    alert('사용 일수를 입력해 주세요');
-                    return false;
-                  }
-                  if (depositStandardUseVal === 'Y') {
-                    $.ajax({
-                      url: "depositStandardUseCheck",
-                      type: "POST",
-                      data: {
-                        waitingDepositStandardCode: waitingDepositStandardCode
-                      },
-                      success: function (result) {
-                        if (result === false) {
-                          alert("이미 사용중 입니다.");
-                          return false;
-                        }
-                        console.log(result);
-                      },
-                      error: function () {
-                        alert('데이터를 가져오는 중에 오류가 발생했습니다.');
-                        return false;
-                      }
-                    });
-                  }
+        function cancelAndGoBack() {
+            alert('수정을 취소했습니다.');
+            history.back();
+        }
+        
+        $(document).ready(function(){
+        
+            // [수정] 페이지 로드 시, 2개 input의 초기 값을 변수에 저장
+            originalPeriodValue = $('#waitingDepositPeriod').val();
+            originalUseValue = $('#depositStandardUse').val();
+            
+            // 폼 제출(submit) 이벤트 감지
+            $('#modifyDepositStandardForm').on('submit', function(e) {
+              let currentPeriodValue = $('#waitingDepositPeriod').val();
+              let depositStandardUseVal = $('#depositStandardUse').val();
+              
+              // [수정] 1. 값 변경 유무 비교 로직 (기간과 사용유무 둘 다 비교)
+              if (currentPeriodValue === originalPeriodValue && depositStandardUseVal === originalUseValue) {
+                  alert('변경된 내용이 없습니다.');
+                  e.preventDefault(); // 폼 전송을 막습니다.
+                  return; // 함수 실행을 중단합니다.
+              }
+              
+              // [수정] 2. 기본 유효성 검사 (기간)
+              // (참고: '사용 유무'는 input의 'required' 속성이 검사합니다.)
+              // (참고: 0일도 안되므로 1로 변경, input min="1"과 일치시킴)
+              if (currentPeriodValue == null || currentPeriodValue < '1') {
+                alert('기간은 1 이상의 일수로 선택해 주세요');
+                e.preventDefault(); // 폼 전송을 막습니다.
+                return;
+              }       
+              
+              // [제거] 3. 불필요한 AJAX 중복 검사 로직 제거
+              // (이유: 서버 컨트롤러/서비스에서 완벽하게 처리하고,
+              //        비동기로 작동하여 폼 전송을 막지도 못했음)
+              /*
+              if (depositStandardUseVal === 'Y') {
+                $.ajax({ ... });
+              }
+              */
+              
+              // 모든 클라이언트 검증 통과 시, 폼을 서버로 제출합니다.
+              // (서버에서 '나를 제외한 중복 검사'를 수행할 것입니다.)
+            });
+         });
+         
+        function cancelButton() {
+            alert('수정을 취소했습니다.');
+            location.href = '/admin/deposit/depositStandard';
+        }
+         
+       /* 선택한 기준 수정전 값 ajax (이 코드는 그대로 둡니다) */	
+        $(document).ready(function() {
+            let formData = {
+                'waitingDepositPeriod': $('#waitingDepositPeriod').val()}         
+            $("#modifyDepositCheck").click(function(){
+                $.ajax({
+                    url: "modifyCheck",
+                    type: "POST",						
+                    data:formData,		
+                    success: function(result) {							
+                        $("#name").text('지금 사용중인 값은'+ result+'일 입니다');
+                    },		
+                    error:function(){
+                        alert('가져오지 못했습니다.');
+                    }
                 });
-             });
-
-           /* 선택한 기준 수정전 값 ajax  */	
-			$(document).ready(function() {
-				let formData = {
-    				'waitingDepositPeriod': $('#waitingDepositPeriod').val()}
-				
-				$("#modifyDepositCheck").click(function(){
-					$.ajax({
-						url: "modifyCheck",	// 이 주소와 통신을 시작한다.
-						type: "POST",						
-						data:formData,		
-						success: function(result) {							
-							$("#name").text('지금 사용중인 값은'+ result+'일 입니다');
-						},		
-						error:function(){
-							alert('가져오지 못했습니다.');
-						}
-					});
-				});
-			});		
-		</script>
+            });
+        });		
+    </script>
+    
+	    <script th:if="${msg}" th:inline="javascript">
+	        /*<![CDATA[*/
+	          alert([[${msg}]]);
+	        /*]]>*/
+	    </script>
+	    
 	</th:block>
 	
 </html>

@@ -11,7 +11,7 @@
                 <!-- Small table -->
                 <div class="col-md-12">
                   <div class="card shadow">
-                    <div class="card-body">
+                    <div class="card-body">              
                       <div class="form-wrapper">
                       <!-- table -->
 						<form id="deleteDepositStandardForm" th:action="@{/admin/deposit/deleteDepositStandard}" method="post">
@@ -54,12 +54,17 @@
 	</div>
 	</th:block>
 		<th:block layout:fragment="customJs">
-		 <script>
-    	document.getElementById("deleteDepositStandardBtn").addEventListener("click", function() {
-      	
-      	alert("관리자 정보가 일치하면 삭제됩니다.");      
-    });
-  </script>
+		 <script th:inline="javascript">
+			/*<![CDATA[*/
+			
+			const serverMessage = /*[[${msg}]]*/ null;		
+			if (serverMessage) {			
+				alert(serverMessage);
+			}
+		
+			
+			/*]]>*/
+  		</script>
 	</th:block>
 	
 	
