@@ -249,39 +249,79 @@
 		WHERE
 			user_id = #{sessionId}
 	</select>
-    <insert id="createDepositRefundById" parameterType="Deposit">
-		INSERT INTO deposit_refund_history
-			VALUES ((SELECT
-						deposit_refund_history_code
-					 FROM
-						(SELECT
-							CASE WHEN
-								COUNT(*) = 0 THEN 'deposit_refund_history_code1'
-							ELSE
-								CONCAT('deposit_refund_history_code',
-								MAX(CAST(SUBSTRING_INDEX(deposit_refund_history_code,'code', -1) AS UNSIGNED))+1)
-							END AS deposit_refund_history_code
-						FROM
-							deposit_refund_history)sub_sc)
-		,#{userId}
-		,#{userName}
-		,#{bankName}
-		,#{accountNumber}
-		,#{depositRefundApply}
-		,'adminid001'
-		,CURDATE());
+   <insert id="createDepositRefundById" parameterType="ks47team03.user.dto.Deposit">
+    INSERT INTO deposit_refund_history (
+        deposit_refund_history_code,
+        user_id,
+        user_name,
+        account_user_name,
+        bank_name,
+        account_number,
+        deposit_refund_apply,
+        deposit_refund_result,  admin_id,
+        up_datetime
+    )
+    VALUES (
+        (SELECT 
+            deposit_refund_history_code 
+         FROM 
+            (SELECT 
+                CASE 
+                    WHEN COUNT(*) = 0 THEN 'deposit_refund_history_code1' 
+                    ELSE CONCAT('deposit_refund_history_code', MAX(CAST(SUBSTRING_INDEX(deposit_refund_history_code,'code', -1) AS UNSIGNED))+1) 
+                END AS deposit_refund_history_code 
+             FROM 
+                deposit_refund_history) sub_sc
+        ), 
+        #{userId},              
+        #{userName},               
+        #{userName},        
+        #{bankName},               
+        #{accountNumber},         
+        #{depositRefundApply},     
+        'N',                   
+        'adminid001',              
+        CURDATE()                  );
+</insert>
+
+	<insert id="payByTossPaymentsById" parameterType="ks47team03.user.dto.TossPayment">
+		INSERT INTO deposit_pay_history
+		(
+			user_id, 
+			charging_amount, 
+			payment_method, 
+			pay_application_datetime, 
+			admin_id,
+			
+			<choose>
+				<when test='method == "가상계좌"'>
+					virtual_account,
+					waiting_deposit_standard_code, 
+					waiting_deposit_period, 
+					waiting_deposit_datetime, 
+					static_code, 
+					deposit_completion_datetime 
+				</when>
+				<otherwise>
+					static_code,
+					deposit_completion_datetime
+				</otherwise>
+			</choose>
+		)
+		VALUES
+		(
+			#{userId},		#{amount},		#{method},		NOW(),			'adminid001',	<choose>
+				<when test='method == "가상계좌"'>
+					#{virtualBank}, (SELECT wds.waiting_deposit_standard_code FROM waiting_deposit_standard AS wds WHERE wds.deposit_standard_use = 'Y'),
+					(SELECT wds.waiting_deposit_period FROM waiting_deposit_standard AS wds WHERE wds.deposit_standard_use = 'Y'),
+					NOW(),
+					'deposit_sc9_1', DATE_ADD(NOW(), INTERVAL (SELECT wds.waiting_deposit_period FROM waiting_deposit_standard AS wds WHERE wds.deposit_standard_use = 'Y') DAY)
+				</when>
+				<otherwise>
+					'deposit_sc9_2', NOW() </otherwise>
+			</choose>
+		)
 	</insert>
-
-	<select id="payByTossPaymentsById">
-		/* */
-		select
-		*
-		from
-		payment
-
-
-
-	</select>
 
 
 </mapper>

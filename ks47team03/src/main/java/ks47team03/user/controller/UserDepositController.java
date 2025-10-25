@@ -133,50 +133,92 @@ public class UserDepositController {
 	/*@PostMapping*/
 
 	@RequestMapping(value = "/success", method = RequestMethod.GET)
-	public String tossPaySuccess(HttpServletRequest request, Model model
+	public String tossPaySuccess(HttpServletRequest request, Model model ,HttpSession session, @RequestParam String paymentKey, 
+			 					@RequestParam String orderId, 
+			 					@RequestParam Long amount, 
+			 					TossPayment tossPayment) throws Exception { 
+			
+		// 1. /confirm 에 있던 승인 요청 JSON 객체 생성 로직
+				JSONObject obj = new JSONObject();
+				obj.put("orderId", orderId);
+				obj.put("amount", amount);
+				obj.put("paymentKey", paymentKey);
+
+				log.info("Toss 승인 요청 JSON: " + String.valueOf(obj));
+
+				// 2. /confirm 에 있던 Toss API 서버-to-서버 호출 로직
+				String tossPaySecretKey = "test_sk_LBa5PzR0ArngwDn2wKx8vmYnNeDM";
+				Base64.Encoder encoder = Base64.getEncoder();
+				byte[] encodedBytes = encoder.encode((tossPaySecretKey + ":").getBytes("UTF-8"));
+				String authorizations = "Basic " + new String(encodedBytes, 0, encodedBytes.length);
+
+				URL url = new URL("https://api.tosspayments.com/v1/payments/confirm");
+				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+				connection.setRequestProperty("Authorization", authorizations);
+				connection.setRequestProperty("Content-Type", "application/json");
+				connection.setRequestMethod("POST");
+				connection.setDoOutput(true);
+
+				OutputStream outputStream = connection.getOutputStream();
+				outputStream.write(obj.toString().getBytes("UTF-8"));
+
+				int code = connection.getResponseCode();
+				boolean isSuccess = (code == 200);
+
+				InputStream responseStream = isSuccess ? connection.getInputStream() : connection.getErrorStream();
+				
+				JSONParser parser = new JSONParser(); // JSON 파서 생성
+				Reader reader = new InputStreamReader(responseStream, StandardCharsets.UTF_8);
+				JSONObject jsonObject = (JSONObject) parser.parse(reader);
+				responseStream.close();
+
+				model.addAttribute("responseStr", jsonObject.toJSONString());
+				System.out.println("Toss 승인 응답: " + jsonObject.toJSONString());
+
+				// 3. /confirm 에 있던 응답 결과 파싱 및 DB 저장 로직
+				if (isSuccess) {
+										
+		            
+					String userId = (String) session.getAttribute("SID");
+					// tossPayment DTO에 필요한 정보 채우기
+					// (TossPayment DTO에 userId 필드가 없다면 추가해야 합니다)
+					// tossPayment.setUserId(userId); 
+					tossPayment.setOrderId((String) jsonObject.get("orderId"));
+					tossPayment.setOrderName((String) jsonObject.get("orderName"));
+					tossPayment.setAmount(String.valueOf(jsonObject.get("totalAmount"))); // Long을 String으로
+
+					if (((String) jsonObject.get("method")).equals("가상계좌")) {
+						tossPayment.setMethod("가상계좌");
+						JSONObject virtualAccount = (JSONObject) jsonObject.get("virtualAccount");
+						tossPayment.setVirtualAccountNumber((String) virtualAccount.get("accountNumber"));
+						tossPayment.setCustomerName((String) virtualAccount.get("customerName"));
+						tossPayment.setVirtualBank((String) virtualAccount.get("bank"));
+						
+					} else if (((String) jsonObject.get("method")).equals("계좌이체")) {
+						tossPayment.setMethod("계좌이체");
+						JSONObject transfer = (JSONObject) jsonObject.get("transfer");
+						model.addAttribute("bank", (String) transfer.get("bank"));
+						// 계좌이체 관련 정보 DTO에 추가 (필요시)
+					}
+					
+					log.info("DB 저장될 TossPayment DTO: " + String.valueOf(tossPayment));
+					
+					tossPayment.setUserId((String) session.getAttribute("SID"));
+					// 4. 서비스 호출하여 DB에 저장
+					this.userDepositService.payByTossPayments(tossPayment);
+
+					// 5. 성공 페이지로 이동
+					return "user/deposit/success";
+
+				} else {
+					// 6. 실패 시 실패 페이지로 이동
+					model.addAttribute("code", (String) jsonObject.get("code"));
+					model.addAttribute("message", (String) jsonObject.get("message"));
+					return "user/deposit/fail";
+				}
+			}
 
 
-
-
-
-			/*@RequestParam String paymentKey, @RequestParam String orderId, @RequestParam Long amount*/) throws Exception{
-
-/*
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Authorization", "Basic" + Base64.getEncoder().encodeToString((SECRET_KEY+":").getBytes()).getBytes());
-		headers.setContentType(MediaType.APPLICATION_JSON);
-
-		Map<String, String> payloadMap = new HashMap<>();
-		payloadMap.put("orderId", orderId);
-		payloadMap.put("amount", String.valueOf(amount));
-
-		ObjectMapper objectMapper = new ObjectMapper();
-		String requestBody = (String) objectMapper.writeValueAsString(payloadMap);
-
-		HttpEntity<String> httpEntity = new HttpEntity<>(requestBody,headers);
-
-		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<JsonNode> responseEntity = restTemplate.postForEntity(
-				"https://api.tosspayment.com/v1/payments/" + paymentKey, httpEntity, JsonNode.class);
-
-
-		if(responseEntity.getStatusCode() == HttpStatus.OK){
-			JsonNode successNode = responseEntity.getBody();
-			model.addAttribute("orderId",successNode.get("orderId").asText());
-			String secret = successNode.get("secret").asText();
-			userDepositService.payByTossPayments(tossPayment);
-			return "user/deposit/success";
-		}else {
-			JsonNode failNode = responseEntity.getBody();
-			model.addAttribute("message", failNode.get("message").asText());
-			model.addAttribute("code",failNode.get("code").asText());
-			return "user/deposit/fail";
-		}
-*/
-
-
-
-	return "user/deposit/success";}
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String index(HttpServletRequest request, Model model) throws Exception {
@@ -199,12 +241,52 @@ public class UserDepositController {
 		model.addAttribute("code", failCode);
 		model.addAttribute("message", failMessage);
 
-		return "user/deposit/fail";
+		return "user/deposit/depositCheckFail";
 	}
-
-
-	//일반 결제 성공 페이지
 	
+	
+	/*
+	 * @PostMapping("/webhook/toss") public ResponseEntity<String>
+	 * handleTossWebhook(@RequestBody JsonNode payload) {
+	 * 
+	 * // 1. 이벤트 타입 (eventType) 확인 String eventType =
+	 * payload.get("eventType").asText(); log.info("Toss Webhook 수신. 이벤트 타입: {}",
+	 * eventType);
+	 * 
+	 * try { // 2. 이벤트 타입별 비즈니스 로직 처리 switch (eventType) { case
+	 * "VIRTUAL_ACCOUNT_DEPOSIT_COMPLETE": // 🔔 [중요] 가상계좌 입금 완료 처리 String orderId =
+	 * payload.get("data").get("orderId").asText(); String secret =
+	 * payload.get("data").get("secret").asText(); // 시크릿 키 검증용 (선택)
+	 * log.info("가상계좌 입금 완료. 주문번호: {}", orderId);
+	 * 
+	 * // TODO: // 1. DB에서 orderId로 주문 정보 조회 (userDepositService 이용) // 2. (보안)
+	 * TOSS에서 받은 secret이 DB에 저장된 secret과 일치하는지 확인 // 3. 주문 상태를 "입금 완료" 또는 "결제 완료"로
+	 * 변경 // 예: userDepositService.updatePaymentStatus(orderId,
+	 * "PAYMENT_COMPLETED"); // 4. DB에 저장
+	 * 
+	 * break;
+	 * 
+	 * case "PAYMENT_STATUS_CHANGED": // 결제 상태 변경 처리 (예: 에스크로 상태 변경) String
+	 * paymentStatusOrderId = payload.get("data").get("orderId").asText(); String
+	 * status = payload.get("data").get("status").asText();
+	 * log.info("결제 상태 변경: {} / 상태: {}", paymentStatusOrderId, status);
+	 * 
+	 * // TODO: 필요한 경우 주문 상태 업데이트 로직 break;
+	 * 
+	 * // TODO: 필요한 다른 이벤트 타입들 처리 (예: REFUND_STATUS_CHANGED 등)
+	 * 
+	 * default: log.warn("처리되지 않는 이벤트 타입: {}", eventType); break; }
+	 * 
+	 * // 3. Toss Payments 서버에 "성공" 응답 (200 OK) // 이 응답을 보내야 Toss 측에서 재요청을 보내지 않습니다.
+	 * return ResponseEntity.ok("success");
+	 * 
+	 * } catch (Exception e) { // 4. 로직 처리 중 에러 발생 시 // 에러 로그를 남기고, Toss에는 500
+	 * Internal Server Error 응답 // Toss는 이 경우 웹훅을 재시도합니다. log.error("웹훅 처리 중 에러 발생",
+	 * e); return ResponseEntity.internalServerError().body("error"); } }
+	 * 
+	 * 
+	 * //일반 결제 성공 페이지
+	 */	
 	@GetMapping("/depositCheckSuccess")
 	public String depositCheckSuccess(HttpSession session,		
 										Model model) {

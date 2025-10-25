@@ -1,50 +1,18 @@
 package ks47team03.user.dto;
 
+import lombok.Data;
+
+@Data
 public class TossPayment {
 
-	public void setOrderId(String string) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setMethod(String string) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setVirtualAccountNumber(String string) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setCustomerName(String string) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setAmount(String string) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setVirtualBank(String string) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setOrderName(String string) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setMethod1(String string) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setVirtualAccountNumber1(String string) {
-		// TODO Auto-generated method stub
-		
-	}
+	private String orderId;
+    private String orderName;
+    private String method; // <-- 오류가 발생했던 필드
+    private String amount;
+    private String customerName;
+    private String virtualBank;
+    private String virtualAccountNumber;
+    
+    private String userId;
 
 }

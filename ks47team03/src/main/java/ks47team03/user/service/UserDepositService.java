@@ -161,21 +161,11 @@ public List<Map<String, Object>> getUserDepositPaySuccessList(String userId) {
 	}
 
 	public void payByTossPayments(TossPayment tossPayment) {
-		// TODO Auto-generated method stub
+		userDepositMapper.payByTossPaymentsById(tossPayment);
 		
 	}
 
-/*
- * public void payByTossPayments(TossPayment tossPayment) {
- * userDepositMapper.payByTossPaymentsById(tossPayment);
- * 
- * }
- */
 
 
 
-
-    /*public void createDepositTossPay(list) {
-	userDepositMapper.createDepositTossPayById(jsonObject);
-    }*/
 }
