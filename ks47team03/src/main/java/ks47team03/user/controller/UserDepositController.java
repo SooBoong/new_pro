@@ -208,13 +208,17 @@ public class UserDepositController {
 					this.userDepositService.payByTossPayments(tossPayment);
 
 					// 5. 성공 페이지로 이동
-					return "user/deposit/success";
+					return "redirect:/deposit/depositCheckSuccess";
 
 				} else {
-					// 6. 실패 시 실패 페이지로 이동
-					model.addAttribute("code", (String) jsonObject.get("code"));
-					model.addAttribute("message", (String) jsonObject.get("message"));
-					return "user/deposit/fail";
+					//6. 실패 시 실패 페이지로 이동													
+					log.error("Toss 결제 승인 실패: {}", jsonObject.toJSONString()); 
+				    
+				    model.addAttribute("code", (String) jsonObject.get("code"));
+				    model.addAttribute("message", (String) jsonObject.get("message"));
+				    return "user/deposit/depositCheckFail";
+				    
+				    			
 				}
 			}
 
@@ -223,7 +227,7 @@ public class UserDepositController {
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String index(HttpServletRequest request, Model model) throws Exception {
 
-		return "user/deposit//checkout";
+		return "user/deposit/checkout";
 	}
 
 	/**
@@ -305,6 +309,8 @@ public class UserDepositController {
 		model.addAttribute("title","결제 실패");
 		return "user/deposit/depositCheckFail";
 	}
+	
+	
 	//내 보증금 조회
 	@GetMapping("/mydeposit")
 	public String mydeposit(
