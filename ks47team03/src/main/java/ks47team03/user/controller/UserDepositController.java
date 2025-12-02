@@ -132,97 +132,201 @@ public class UserDepositController {
 
 	/*@PostMapping*/
 
+	/*
+	 * @RequestMapping(value = "/success", method = RequestMethod.GET) public String
+	 * tossPaySuccess(HttpServletRequest request, Model model ,HttpSession
+	 * session, @RequestParam String paymentKey,
+	 * 
+	 * @RequestParam String orderId,
+	 * 
+	 * @RequestParam Long amount, TossPayment tossPayment) throws Exception {
+	 * 
+	 * // 1. /confirm 에 있던 승인 요청 JSON 객체 생성 로직 JSONObject obj = new JSONObject();
+	 * obj.put("orderId", orderId); obj.put("amount", amount); obj.put("paymentKey",
+	 * paymentKey);
+	 * 
+	 * log.info("Toss 승인 요청 JSON: " + String.valueOf(obj));
+	 * 
+	 * // 2. /confirm 에 있던 Toss API 서버-to-서버 호출 로직 String tossPaySecretKey =
+	 * "test_sk_LBa5PzR0ArngwDn2wKx8vmYnNeDM"; Base64.Encoder encoder =
+	 * Base64.getEncoder(); byte[] encodedBytes = encoder.encode((tossPaySecretKey +
+	 * ":").getBytes("UTF-8")); String authorizations = "Basic " + new
+	 * String(encodedBytes, 0, encodedBytes.length);
+	 * 
+	 * URL url = new URL("https://api.tosspayments.com/v1/payments/confirm");
+	 * HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+	 * connection.setRequestProperty("Authorization", authorizations);
+	 * connection.setRequestProperty("Content-Type", "application/json");
+	 * connection.setRequestMethod("POST"); connection.setDoOutput(true);
+	 * 
+	 * OutputStream outputStream = connection.getOutputStream();
+	 * outputStream.write(obj.toString().getBytes("UTF-8"));
+	 * 
+	 * int code = connection.getResponseCode(); boolean isSuccess = (code == 200);
+	 * 
+	 * InputStream responseStream = isSuccess ? connection.getInputStream() :
+	 * connection.getErrorStream();
+	 * 
+	 * JSONParser parser = new JSONParser(); // JSON 파서 생성 Reader reader = new
+	 * InputStreamReader(responseStream, StandardCharsets.UTF_8); JSONObject
+	 * jsonObject = (JSONObject) parser.parse(reader); responseStream.close();
+	 * 
+	 * model.addAttribute("responseStr", jsonObject.toJSONString());
+	 * System.out.println("Toss 승인 응답: " + jsonObject.toJSONString());
+	 * 
+	 * // 3. /confirm 에 있던 응답 결과 파싱 및 DB 저장 로직 if (isSuccess) {
+	 * 
+	 * 
+	 * String userId = (String) session.getAttribute("SID"); // tossPayment DTO에 필요한
+	 * 정보 채우기 // (TossPayment DTO에 userId 필드가 없다면 추가해야 합니다) //
+	 * tossPayment.setUserId(userId); tossPayment.setOrderId((String)
+	 * jsonObject.get("orderId")); tossPayment.setOrderName((String)
+	 * jsonObject.get("orderName"));
+	 * tossPayment.setAmount(String.valueOf(jsonObject.get("totalAmount"))); //
+	 * Long을 String으로
+	 * 
+	 * if (((String) jsonObject.get("method")).equals("가상계좌")) {
+	 * tossPayment.setMethod("가상계좌"); JSONObject virtualAccount = (JSONObject)
+	 * jsonObject.get("virtualAccount");
+	 * tossPayment.setVirtualAccountNumber((String)
+	 * virtualAccount.get("accountNumber")); tossPayment.setCustomerName((String)
+	 * virtualAccount.get("customerName")); tossPayment.setVirtualBank((String)
+	 * virtualAccount.get("bank"));
+	 * 
+	 * } else if (((String) jsonObject.get("method")).equals("계좌이체")) {
+	 * tossPayment.setMethod("계좌이체"); JSONObject transfer = (JSONObject)
+	 * jsonObject.get("transfer"); model.addAttribute("bank", (String)
+	 * transfer.get("bank")); // 계좌이체 관련 정보 DTO에 추가 (필요시) }
+	 * 
+	 * log.info("DB 저장될 TossPayment DTO: " + String.valueOf(tossPayment));
+	 * 
+	 * tossPayment.setUserId((String) session.getAttribute("SID")); // 4. 서비스 호출하여
+	 * DB에 저장 this.userDepositService.payByTossPayments(tossPayment);
+	 * 
+	 * // 5. 성공 페이지로 이동 return "redirect:/deposit/depositCheckSuccess";
+	 * 
+	 * } else { //6. 실패 시 실패 페이지로 이동 log.error("Toss 결제 승인 실패: {}",
+	 * jsonObject.toJSONString());
+	 * 
+	 * model.addAttribute("code", (String) jsonObject.get("code"));
+	 * model.addAttribute("message", (String) jsonObject.get("message")); return
+	 * "user/deposit/depositCheckFail";
+	 * 
+	 * 
+	 * } }
+	 */
+
 	@RequestMapping(value = "/success", method = RequestMethod.GET)
-	public String tossPaySuccess(HttpServletRequest request, Model model ,HttpSession session, @RequestParam String paymentKey, 
-			 					@RequestParam String orderId, 
-			 					@RequestParam Long amount, 
-			 					TossPayment tossPayment) throws Exception { 
-			
-		// 1. /confirm 에 있던 승인 요청 JSON 객체 생성 로직
-				JSONObject obj = new JSONObject();
-				obj.put("orderId", orderId);
-				obj.put("amount", amount);
-				obj.put("paymentKey", paymentKey);
+    public String tossPaySuccess(HttpServletRequest request, Model model, HttpSession session,
+                                 @RequestParam String paymentKey,
+                                 @RequestParam String orderId,
+                                 @RequestParam Long amount,
+                                 TossPayment tossPayment) throws Exception {
 
-				log.info("Toss 승인 요청 JSON: " + String.valueOf(obj));
+        log.info("====== 결제 승인 요청 시작 ======");
 
-				// 2. /confirm 에 있던 Toss API 서버-to-서버 호출 로직
-				String tossPaySecretKey = "test_sk_LBa5PzR0ArngwDn2wKx8vmYnNeDM";
-				Base64.Encoder encoder = Base64.getEncoder();
-				byte[] encodedBytes = encoder.encode((tossPaySecretKey + ":").getBytes("UTF-8"));
-				String authorizations = "Basic " + new String(encodedBytes, 0, encodedBytes.length);
+        // 1. 세션 체크 (로그인 풀림 방지)
+        String userId = (String) session.getAttribute("SID");
+        if (userId == null) {
+            log.error("세션(SID)이 null입니다. 재로그인이 필요합니다.");
+            model.addAttribute("message", "로그인 세션이 만료되었습니다.");
+            return "user/deposit/depositCheckFail";
+        }
 
-				URL url = new URL("https://api.tosspayments.com/v1/payments/confirm");
-				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-				connection.setRequestProperty("Authorization", authorizations);
-				connection.setRequestProperty("Content-Type", "application/json");
-				connection.setRequestMethod("POST");
-				connection.setDoOutput(true);
+        // 2. 토스 API 호출을 위한 준비
+        JSONObject obj = new JSONObject();
+        obj.put("orderId", orderId);
+        obj.put("amount", amount);
+        obj.put("paymentKey", paymentKey);
 
-				OutputStream outputStream = connection.getOutputStream();
-				outputStream.write(obj.toString().getBytes("UTF-8"));
+        String tossPaySecretKey = "test_sk_LBa5PzR0ArngwDn2wKx8vmYnNeDM"; // 시크릿 키
+        Base64.Encoder encoder = Base64.getEncoder();
+        byte[] encodedBytes = encoder.encode((tossPaySecretKey + ":").getBytes(StandardCharsets.UTF_8));
+        String authorizations = "Basic " + new String(encodedBytes);
 
-				int code = connection.getResponseCode();
-				boolean isSuccess = (code == 200);
+        // 3. 토스 API 호출 (서버 통신)
+        URL url = new URL("https://api.tosspayments.com/v1/payments/confirm");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestProperty("Authorization", authorizations);
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setRequestMethod("POST");
+        connection.setDoOutput(true);
 
-				InputStream responseStream = isSuccess ? connection.getInputStream() : connection.getErrorStream();
-				
-				JSONParser parser = new JSONParser(); // JSON 파서 생성
-				Reader reader = new InputStreamReader(responseStream, StandardCharsets.UTF_8);
-				JSONObject jsonObject = (JSONObject) parser.parse(reader);
-				responseStream.close();
+        OutputStream outputStream = connection.getOutputStream();
+        outputStream.write(obj.toString().getBytes("UTF-8"));
 
-				model.addAttribute("responseStr", jsonObject.toJSONString());
-				System.out.println("Toss 승인 응답: " + jsonObject.toJSONString());
+        // 4. 응답 받기
+        int code = connection.getResponseCode();
+        boolean isSuccess = code == 200;
 
-				// 3. /confirm 에 있던 응답 결과 파싱 및 DB 저장 로직
-				if (isSuccess) {
-										
-		            
-					String userId = (String) session.getAttribute("SID");
-					// tossPayment DTO에 필요한 정보 채우기
-					// (TossPayment DTO에 userId 필드가 없다면 추가해야 합니다)
-					// tossPayment.setUserId(userId); 
-					tossPayment.setOrderId((String) jsonObject.get("orderId"));
-					tossPayment.setOrderName((String) jsonObject.get("orderName"));
-					tossPayment.setAmount(String.valueOf(jsonObject.get("totalAmount"))); // Long을 String으로
+        InputStream responseStream = isSuccess ? connection.getInputStream() : connection.getErrorStream();
+        Reader reader = new InputStreamReader(responseStream, StandardCharsets.UTF_8);
+        JSONParser parser = new JSONParser();
+        JSONObject jsonObject = (JSONObject) parser.parse(reader);
+        responseStream.close();
 
-					if (((String) jsonObject.get("method")).equals("가상계좌")) {
-						tossPayment.setMethod("가상계좌");
-						JSONObject virtualAccount = (JSONObject) jsonObject.get("virtualAccount");
-						tossPayment.setVirtualAccountNumber((String) virtualAccount.get("accountNumber"));
-						tossPayment.setCustomerName((String) virtualAccount.get("customerName"));
-						tossPayment.setVirtualBank((String) virtualAccount.get("bank"));
-						
-					} else if (((String) jsonObject.get("method")).equals("계좌이체")) {
-						tossPayment.setMethod("계좌이체");
-						JSONObject transfer = (JSONObject) jsonObject.get("transfer");
-						model.addAttribute("bank", (String) transfer.get("bank"));
-						// 계좌이체 관련 정보 DTO에 추가 (필요시)
-					}
-					
-					log.info("DB 저장될 TossPayment DTO: " + String.valueOf(tossPayment));
-					
-					tossPayment.setUserId((String) session.getAttribute("SID"));
-					// 4. 서비스 호출하여 DB에 저장
-					this.userDepositService.payByTossPayments(tossPayment);
+        log.info("Toss 응답 Code: {}", code);
+        log.info("Toss 응답 Body: {}", jsonObject.toJSONString());
 
-					// 5. 성공 페이지로 이동
-					return "redirect:/deposit/depositCheckSuccess";
+        // 5. 결과 처리
+        if (isSuccess) {
+            try {
+                // DTO에 값 세팅
+                tossPayment.setUserId(userId);
+                tossPayment.setPaymentKey(paymentKey);
+                tossPayment.setOrderId((String) jsonObject.get("orderId"));
+                tossPayment.setOrderName((String) jsonObject.get("orderName"));
+                tossPayment.setAmount(String.valueOf(jsonObject.get("totalAmount")));
 
-				} else {
-					//6. 실패 시 실패 페이지로 이동													
-					log.error("Toss 결제 승인 실패: {}", jsonObject.toJSONString()); 
-				    
-				    model.addAttribute("code", (String) jsonObject.get("code"));
-				    model.addAttribute("message", (String) jsonObject.get("message"));
-				    return "user/deposit/depositCheckFail";
-				    
-				    			
-				}
-			}
+                String method = (String) jsonObject.get("method");
+                tossPayment.setMethod(method);
 
+                // 가상계좌일 경우 은행명, 계좌번호 처리
+                if ("가상계좌".equals(method)) {
+                    JSONObject virtualAccount = (JSONObject) jsonObject.get("virtualAccount");
+                    
+                    // 계좌번호 추출
+                    tossPayment.setVirtualAccountNumber((String) virtualAccount.get("accountNumber"));
+                    // 예금주명 추출
+                    tossPayment.setCustomerName((String) virtualAccount.get("customerName"));
+                    
+                    // 은행 이름 변환 (bankCode -> 한글 은행명)
+                    String bankName = (String) virtualAccount.get("bank");
+                    if (bankName == null) {
+                        String bankCode = (String) virtualAccount.get("bankCode");
+                        // ★ 아래 헬퍼 메서드를 통해 '11' -> '농협은행' 등으로 변환
+                        bankName = convertBankCodeToName(bankCode); 
+                    }
+                    tossPayment.setVirtualBank(bankName); // 변환된 이름을 DTO에 세팅
 
+                } else if ("계좌이체".equals(method)) {
+                    JSONObject transfer = (JSONObject) jsonObject.get("transfer");
+                    if (transfer != null) {
+                        model.addAttribute("bank", (String) transfer.get("bank"));
+                    }
+                }
+
+                log.info("DB 저장 시도 TossPayment: {}", tossPayment);
+
+                // 서비스 호출 (DB 저장)
+                this.userDepositService.payByTossPayments(tossPayment);
+
+                return "redirect:/deposit/depositCheckSuccess";
+
+            } catch (Exception e) {
+                log.error("DB 처리 중 에러 발생: ", e);
+                model.addAttribute("code", "DB_ERROR");
+                model.addAttribute("message", "결제는 성공했으나 내부 저장 중 오류가 발생했습니다.");
+                return "user/deposit/depositCheckFail";
+            }
+        } else {
+            // 결제 실패 시
+            model.addAttribute("code", (String) jsonObject.get("code"));
+            model.addAttribute("message", (String) jsonObject.get("message"));
+            return "user/deposit/depositCheckFail";
+        }
+    }
+	
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String index(HttpServletRequest request, Model model) throws Exception {
@@ -388,7 +492,53 @@ public class UserDepositController {
 		return "redirect:mydepositRefund";
 	}
 	
-	
+	@PostMapping("/webhook")
+	@ResponseBody // View를 찾지 않고 데이터를 반환하기 위해 필수
+	public ResponseEntity<String> handleWebhook(@RequestBody String jsonBody) throws Exception {
+	    
+	    log.info("🔔 토스 웹훅 수신: {}", jsonBody);
+
+	    JSONParser parser = new JSONParser();
+	    JSONObject jsonObject = (JSONObject) parser.parse(jsonBody);
+
+	    // 1. 이벤트 데이터 파싱
+	    String eventType = (String) jsonObject.get("eventType");
+	    JSONObject data = (JSONObject) jsonObject.get("data");
+	    
+	    String orderId = (String) data.get("orderId"); // 주문 번호 (이걸로 DB 찾음)
+	    String status = (String) data.get("status");   // 결제 상태 (DONE: 입금완료, CANCELED: 취소)
+
+	    log.info("주문번호: {}, 상태: {}", orderId, status);
+
+	    // 2. 입금 완료 처리 (가상계좌 입금 시 status가 'DONE'으로 옴)
+	    if ("DEPOSIT_CALLBACK".equals(eventType) || "DONE".equals(status)) {
+	        
+	        // 서비스 호출하여 DB 상태 업데이트 ('입금대기' -> '입금완료')
+	        userDepositService.updateDepositStatus(orderId);
+	        
+	        log.info("✅ 입금 처리 완료: {}", orderId);
+	    }
+
+	    // 3. 토스 서버에 잘 받았다는 응답(200 OK)을 줘야 재전송을 멈춤
+	    return ResponseEntity.ok("ok");
+	}
+	    
+	    
+	private String convertBankCodeToName(String bankCode) {
+	    if (bankCode == null) return "기타은행";
+	    switch (bankCode) {
+	        case "11": return "농협은행";
+	        case "88": return "신한은행";
+	        case "04": return "KB국민은행";
+	        case "20": return "우리은행";
+	        case "03": return "IBK기업은행";
+	        case "81": return "하나은행";
+	        case "90": return "카카오뱅크";
+	        case "92": return "토스뱅크";
+	        default: return "기타은행(" + bankCode + ")";
+	    }
+	    
+	}
 	
 	
 	

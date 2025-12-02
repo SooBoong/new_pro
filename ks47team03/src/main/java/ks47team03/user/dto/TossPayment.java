@@ -4,15 +4,14 @@ import lombok.Data;
 
 @Data
 public class TossPayment {
-
-	private String orderId;
-    private String orderName;
-    private String method; // <-- 오류가 발생했던 필드
-    private String amount;
-    private String customerName;
-    private String virtualBank;
-    private String virtualAccountNumber;
-    
+    // 기존 필드들...
     private String userId;
-
+    private String orderId;
+    private String orderName;
+    private String amount;
+    private String method;
+    private String virtualAccountNumber;
+    private String customerName;
+    private String virtualBank;   
+    private String paymentKey; 
 }

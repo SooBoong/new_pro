@@ -162,23 +162,24 @@
 	FROM 
 		cup_stock_manage AS csm
 	WHERE 
-		csm.cup_stock_manage_code = 
+		csm.cup_stock_code = 
 		(SELECT concat('cup_stock_manage_code', MAX(CAST(SUBSTRING_INDEX(cup_stock_manage_code, 'code', -1) AS UNSIGNED))) FROM cup_stock_manage);
 	</select>
 	
 	<select id="getCupStockList"  parameterType="map" resultType="map" >
 	/*컵 재고 조회*/
-		SELECT
-			csm.stock_type AS stockType,
-			csm.past_stock AS pastStock,
-			csm.insert_stock AS insertStock,
-			csm.final_stock AS finalStock,
-			csm.admin_id AS adminId,
-			cast(csm.up_datetime AS CHAR(20))  AS updateTime
-		FROM
-			cup_stock_manage AS csm
+		SELECT   
+    csm.cup_stack_code AS cupStockCode, 
+    csm.stock_type AS stockType,
+    csm.past_stock AS pastStock,
+    csm.insert_stock AS insertStock,
+    csm.final_stock AS finalStock,
+    csm.admin_id AS adminId,
+    cast(csm.up_datetime AS CHAR(20)) AS updateTime
+  FROM
+    cup_stock_manage AS csm
 		ORDER BY
-			CAST(SUBSTRING_INDEX(csm.cup_stock_manage_code,'code',-1) AS UNSIGNED)
+			CAST(SUBSTRING_INDEX(csm.cup_stock_code,'code',-1) AS UNSIGNED)
 		<if test="startIndex != null and startIndex > -1 ">
 			LIMIT #{startIndex},#{rowPerPage};
 		</if>

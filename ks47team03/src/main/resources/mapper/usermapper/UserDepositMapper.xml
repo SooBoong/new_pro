@@ -5,9 +5,7 @@
 
 <mapper namespace="ks47team03.user.mapper.UserDepositMapper">
 	<resultMap type="Deposit" id="userDepositPayResultMap">
-		<!-- id태그는 조회시 테이블의 PK(기본키) -->
 		<id 	column="deposit_pay_history" 		property="depositPayHistory"/>
-		<!-- result태그는 조회시 테이블의 일반컬럼 혹은 외래키 -->
 		<result column="user_id" 		property="userId"/>
 		<result column="charging_amount" 	property="chargingAmount"/>
 		<result column="payment_method" 	property="paymentMethod"/>
@@ -20,40 +18,34 @@
 		<result column="admin_id" property="adminId"/>
 		<result column="deposit_completion_datetime" property="depositCompletionDatetime"/>
 		<result column="deposit_name" property="depositName"/>
-		
 	</resultMap>
 
-
-	<select id="getUserDepositPaySuccessList" parameterType="String" >
-	/* 결제성공 표시 */
-	SELECT
-		um.user_name AS userName,
-		dph.payment_method AS paymentMethod,
-		dph.charging_amount AS charginAmount,
-		IFNULL(va.virtual_account_name,0) AS virualAccountName,
-		IFNULL(va.virtual_account_number,0) AS virualAccountNumber,
-		IFNULL(dph.waiting_deposit_datetime, 0) AS waitingDepositDatetime,
-		IFNULL(dph.deposit_completion_datetime, 0) AS depositCompletionDatetime
-	FROM
-		deposit_pay_history AS dph
-		LEFT join
-		virtual_account AS va
-		ON
-		dph.virtual_account = va.virtual_account_name
-		LEFT JOIN 
-		user_manage AS um
-		on
-		dph.user_id = um.user_id
-	WHERE
-		dph.user_id = #{userId}
-	ORDER BY dph.pay_application_datetime DESC
-	LIMIT 1;
-
-	
+    <select id="getUserDepositPaySuccessList" parameterType="String" >
+        /* 결제성공 표시: 최신 내역 1건 조회 */
+        SELECT
+            um.user_name AS userName,
+            dph.payment_method AS paymentMethod,
+            dph.charging_amount AS charginAmount,
+            
+            /* DB에 저장된 실제 은행명과 계좌번호 가져오기 */
+            IFNULL(dph.virtual_account, '은행정보없음') AS virualAccountName,
+            IFNULL(dph.virtual_account_number, '확인불가') AS virualAccountNumber,
+            
+            IFNULL(dph.waiting_deposit_datetime, 0) AS waitingDepositDatetime,
+            IFNULL(dph.deposit_completion_datetime, 0) AS depositCompletionDatetime
+        FROM
+            deposit_pay_history AS dph
+            LEFT JOIN 
+            user_manage AS um
+            on
+            dph.user_id = um.user_id
+        WHERE
+            dph.user_id = #{userId}
+        ORDER BY dph.pay_application_datetime DESC
+        LIMIT 1
 	</select>
 
- 
-  <select id="getUserDepositManageList" parameterType="map" resultType="map">
+    <select id="getUserDepositManageList" parameterType="map" resultType="map">
 		/* 특정 회원 보증금 관리 조회 */
 		SELECT
 			um.user_name AS userName,
@@ -76,8 +68,6 @@
 		</if>
 	</select>
 
-
-
 	<select id="getUserDepositManageListCount" resultType="int">
 		/* 특정 행 기준 계산*/
 		SELECT
@@ -88,8 +78,7 @@
 			user_id= #{userId}
 	</select> 
 	
-	
-	<insert id="createDepositPayById" parameterType="Deposit">	
+    <insert id="createDepositPayById" parameterType="Deposit">	
 		INSERT
 		  INTO deposit_pay_history(user_id, charging_amount, payment_method, pay_application_datetime, waiting_deposit_standard_code, waiting_deposit_period, waiting_deposit_datetime, static_code, admin_id, deposit_completion_datetime, virtual_account)
 		VALUES (						       
@@ -129,43 +118,36 @@
 				)
 	</insert>
 	
- 
- <select id="getUserDepositPayList" parameterType="map" resultType="map">
-		/* 결제 보증금 */
+    <select id="getUserDepositPayList" parameterType="map" resultType="map">
+		/* 결제 보증금 리스트 */
 			SELECT	
 			DPH.user_id AS userId,
 			UM.user_name AS userName,
 			DPH.payment_method AS paymenteMethod,
+            
+            /* 수정: DPH 테이블의 값을 직접 조회 */
 			IFNULL(DPH.virtual_account,'계좌이체') AS virtualAccount, 		
-			IFNULL(VA.virtual_account_number,'계좌이체') AS virtualAccountNumeber,
+			IFNULL(DPH.virtual_account_number,'확인불가') AS virtualAccountNumeber,
+            
 			DPH.charging_amount AS charginAmount,
 			SC.static_code_content AS staticCodeContent,
 			cast(DPH.pay_application_datetime as char(20))  AS applicationDatetime,
 			cast(IFNULL(DPH.deposit_completion_datetime,'') as char(20)) AS depositCompletionDatetime			
 		FROM	
 			deposit_pay_history AS DPH
-			LEFT JOIN
-			virtual_account AS VA
-			ON
-			DPH.virtual_account = VA.virtual_account_name
-			INNER JOIN	
-			user_manage AS UM
-			ON
-			DPH.user_id=UM.user_id
-			LEFT JOIN
-			static_code AS SC
-			ON
-			DPH.static_code = SC.static_code
+			LEFT JOIN virtual_account AS VA ON DPH.virtual_account = VA.virtual_account_name
+			INNER JOIN user_manage AS UM ON DPH.user_id = UM.user_id
+			LEFT JOIN static_code AS SC ON DPH.static_code = SC.static_code
 		 WHERE
 		    DPH.user_id=  #{userId}		 
-		order by length(DPH.deposit_pay_history),DPH.deposit_pay_history	
+		ORDER BY DPH.pay_application_datetime DESC
 	
 		<if test="startIndex != null and startIndex > -1 ">
 			LIMIT #{startIndex},#{rowPerPage};
 		</if>
 	</select>
 
-<select id="getUserDepositPayListCount" resultType="int">
+    <select id="getUserDepositPayListCount" resultType="int">
 		/* 기준 행 계산*/
 		SELECT	
 			COUNT(*)
@@ -208,7 +190,6 @@
 		LIMIT 1	
 	</select>
 	
-	
 	<update id="modifyUserAccount" parameterType="Account">
 		/* 회원 계좌 수정 */
 		UPDATE
@@ -235,7 +216,6 @@
 				CURDATE());
 	</insert>
 	
-	
 	<select id="getUserAccount" parameterType="String">
 		/* 특정 회원 계좌 조회 */
 		SELECT
@@ -249,79 +229,71 @@
 		WHERE
 			user_id = #{sessionId}
 	</select>
-   <insert id="createDepositRefundById" parameterType="ks47team03.user.dto.Deposit">
-    INSERT INTO deposit_refund_history (
-        deposit_refund_history_code,
-        user_id,
-        user_name,
-        account_user_name,
-        bank_name,
-        account_number,
-        deposit_refund_apply,
-        deposit_refund_result,  admin_id,
-        up_datetime
-    )
-    VALUES (
-        (SELECT 
-            deposit_refund_history_code 
-         FROM 
-            (SELECT 
-                CASE 
-                    WHEN COUNT(*) = 0 THEN 'deposit_refund_history_code1' 
-                    ELSE CONCAT('deposit_refund_history_code', MAX(CAST(SUBSTRING_INDEX(deposit_refund_history_code,'code', -1) AS UNSIGNED))+1) 
-                END AS deposit_refund_history_code 
-             FROM 
-                deposit_refund_history) sub_sc
-        ), 
-        #{userId},              
-        #{userName},               
-        #{userName},        
-        #{bankName},               
-        #{accountNumber},         
-        #{depositRefundApply},     
-        'N',                   
-        'adminid001',              
-        CURDATE()                  );
-</insert>
+    
+    <insert id="createDepositRefundById" parameterType="ks47team03.user.dto.Deposit">
+        INSERT INTO deposit_refund_history (
+            deposit_refund_history_code,
+            user_id, user_name, account_user_name, bank_name, account_number,
+            deposit_refund_apply, deposit_refund_result, admin_id, up_datetime
+        )
+        VALUES (
+            (SELECT deposit_refund_history_code FROM 
+                (SELECT CASE WHEN COUNT(*) = 0 THEN 'deposit_refund_history_code1' 
+                        ELSE CONCAT('deposit_refund_history_code', MAX(CAST(SUBSTRING_INDEX(deposit_refund_history_code,'code', -1) AS UNSIGNED))+1) 
+                    END AS deposit_refund_history_code 
+                 FROM deposit_refund_history) sub_sc), 
+            #{userId}, #{userName}, #{userName}, #{bankName}, #{accountNumber},         
+            #{depositRefundApply}, 'N', 'adminid001', CURDATE()
+        );
+    </insert>
 
-	<insert id="payByTossPaymentsById" parameterType="ks47team03.user.dto.TossPayment">
-		INSERT INTO deposit_pay_history
-		(
-			user_id, 
-			charging_amount, 
-			payment_method, 
-			pay_application_datetime, 
-			admin_id,
-			
-			<choose>
-				<when test='method == "가상계좌"'>
-					virtual_account,
-					waiting_deposit_standard_code, 
-					waiting_deposit_period, 
-					waiting_deposit_datetime, 
-					static_code, 
-					deposit_completion_datetime 
-				</when>
-				<otherwise>
-					static_code,
-					deposit_completion_datetime
-				</otherwise>
-			</choose>
-		)
-		VALUES
-		(
-			#{userId},		#{amount},		#{method},		NOW(),			'adminid001',	<choose>
-				<when test='method == "가상계좌"'>
-					#{virtualBank}, (SELECT wds.waiting_deposit_standard_code FROM waiting_deposit_standard AS wds WHERE wds.deposit_standard_use = 'Y'),
-					(SELECT wds.waiting_deposit_period FROM waiting_deposit_standard AS wds WHERE wds.deposit_standard_use = 'Y'),
-					NOW(),
-					'deposit_sc9_1', DATE_ADD(NOW(), INTERVAL (SELECT wds.waiting_deposit_period FROM waiting_deposit_standard AS wds WHERE wds.deposit_standard_use = 'Y') DAY)
-				</when>
-				<otherwise>
-					'deposit_sc9_2', NOW() </otherwise>
-			</choose>
-		)
-	</insert>
+    <insert id="payByTossPaymentsById" parameterType="ks47team03.user.dto.TossPayment">
+        INSERT INTO deposit_pay_history
+        (
+            user_id, 
+            charging_amount, 
+            payment_method, 
+            pay_application_datetime, 
+            admin_id,
+            
+            /* 토스 정보 저장 컬럼 */
+            virtual_account,         
+            virtual_account_number,  
+            
+            waiting_deposit_standard_code, 
+            waiting_deposit_period, 
+            waiting_deposit_datetime,
+            static_code, 
+            deposit_completion_datetime
+        )
+        VALUES
+        (
+            #{userId}, 
+            #{amount}, 
+            #{method}, 
+            NOW(), 
+            'adminid001',
+            
+            /* DTO에서 넘어온 은행명과 계좌번호 */
+            #{virtualBank},           
+            #{virtualAccountNumber},
+            
+            (SELECT wds.waiting_deposit_standard_code FROM waiting_deposit_standard AS wds WHERE wds.deposit_standard_use = 'Y'),
+            (SELECT wds.waiting_deposit_period FROM waiting_deposit_standard AS wds WHERE wds.deposit_standard_use = 'Y'),
+            NOW(),
+            'deposit_sc9_1', 
+            DATE_ADD(NOW(), INTERVAL 7 DAY)
+        )
+    </insert>
 
+    <update id="updateDepositStatusByOrderId" parameterType="String">
+        UPDATE deposit_pay_history
+        SET 
+            deposit_completion_datetime = NOW(),
+            static_code = 'deposit_sc9_2' 
+        WHERE 
+            order_id = #{orderId}
+            AND static_code = 'deposit_sc9_1'
+    </update>
 
 </mapper>
