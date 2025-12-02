@@ -166,10 +166,11 @@ public List<Map<String, Object>> getUserDepositPaySuccessList(String userId) {
 	}
 
 
-	public void updateDepositStatus(String orderId) {
-	    // Mapper를 호출하여 해당 orderId를 가진 결제 건의 상태를 완료로 변경
-	    userDepositMapper.updateDepositStatusByOrderId(orderId);
-	}
+	/*
+	 * public void updateDepositStatus(String orderId) { // Mapper를 호출하여 해당 orderId를
+	 * 가진 결제 건의 상태를 완료로 변경 userDepositMapper.updateDepositStatusByOrderId(orderId);
+	 * }
+	 */
 
 
 }

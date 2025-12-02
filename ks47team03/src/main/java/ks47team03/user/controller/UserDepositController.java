@@ -492,36 +492,35 @@ public class UserDepositController {
 		return "redirect:mydepositRefund";
 	}
 	
-	@PostMapping("/webhook")
-	@ResponseBody // View를 찾지 않고 데이터를 반환하기 위해 필수
-	public ResponseEntity<String> handleWebhook(@RequestBody String jsonBody) throws Exception {
-	    
-	    log.info("🔔 토스 웹훅 수신: {}", jsonBody);
-
-	    JSONParser parser = new JSONParser();
-	    JSONObject jsonObject = (JSONObject) parser.parse(jsonBody);
-
-	    // 1. 이벤트 데이터 파싱
-	    String eventType = (String) jsonObject.get("eventType");
-	    JSONObject data = (JSONObject) jsonObject.get("data");
-	    
-	    String orderId = (String) data.get("orderId"); // 주문 번호 (이걸로 DB 찾음)
-	    String status = (String) data.get("status");   // 결제 상태 (DONE: 입금완료, CANCELED: 취소)
-
-	    log.info("주문번호: {}, 상태: {}", orderId, status);
-
-	    // 2. 입금 완료 처리 (가상계좌 입금 시 status가 'DONE'으로 옴)
-	    if ("DEPOSIT_CALLBACK".equals(eventType) || "DONE".equals(status)) {
-	        
-	        // 서비스 호출하여 DB 상태 업데이트 ('입금대기' -> '입금완료')
-	        userDepositService.updateDepositStatus(orderId);
-	        
-	        log.info("✅ 입금 처리 완료: {}", orderId);
-	    }
-
-	    // 3. 토스 서버에 잘 받았다는 응답(200 OK)을 줘야 재전송을 멈춤
-	    return ResponseEntity.ok("ok");
-	}
+	/*
+	 * @PostMapping("/webhook")
+	 * 
+	 * @ResponseBody // View를 찾지 않고 데이터를 반환하기 위해 필수 public ResponseEntity<String>
+	 * handleWebhook(@RequestBody String jsonBody) throws Exception {
+	 * 
+	 * log.info("🔔 토스 웹훅 수신: {}", jsonBody);
+	 * 
+	 * JSONParser parser = new JSONParser(); JSONObject jsonObject = (JSONObject)
+	 * parser.parse(jsonBody);
+	 * 
+	 * // 1. 이벤트 데이터 파싱 String eventType = (String) jsonObject.get("eventType");
+	 * JSONObject data = (JSONObject) jsonObject.get("data");
+	 * 
+	 * String orderId = (String) data.get("orderId"); // 주문 번호 (이걸로 DB 찾음) String
+	 * status = (String) data.get("status"); // 결제 상태 (DONE: 입금완료, CANCELED: 취소)
+	 * 
+	 * log.info("주문번호: {}, 상태: {}", orderId, status);
+	 * 
+	 * // 2. 입금 완료 처리 (가상계좌 입금 시 status가 'DONE'으로 옴) if
+	 * ("DEPOSIT_CALLBACK".equals(eventType) || "DONE".equals(status)) {
+	 * 
+	 * // 서비스 호출하여 DB 상태 업데이트 ('입금대기' -> '입금완료')
+	 * userDepositService.updateDepositStatus(orderId);
+	 * 
+	 * log.info("✅ 입금 처리 완료: {}", orderId); }
+	 * 
+	 * // 3. 토스 서버에 잘 받았다는 응답(200 OK)을 줘야 재전송을 멈춤 return ResponseEntity.ok("ok"); }
+	 */
 	    
 	    
 	private String convertBankCodeToName(String bankCode) {
