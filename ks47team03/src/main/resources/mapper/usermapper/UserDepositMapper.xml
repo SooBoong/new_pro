@@ -295,5 +295,12 @@
             order_id = #{orderId}
             AND static_code = 'deposit_sc9_1'
     </update>
+    
+    <update id="updatePaymentStatusToDone" parameterType="String">
+    UPDATE tb_deposit_pay
+       SET payment_status = '결제완료'
+         , payment_date   = NOW()
+     WHERE order_id = #{orderId}
+</update>
 
 </mapper>

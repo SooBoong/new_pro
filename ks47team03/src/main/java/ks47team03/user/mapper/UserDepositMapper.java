@@ -35,4 +35,6 @@ public interface UserDepositMapper {
 
 
 	public void payByTossPaymentsById(TossPayment tossPayment);
+	
+	public int updatePaymentStatusToDone(String orderId);
 }

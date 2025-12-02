@@ -8,6 +8,7 @@ import java.util.Map;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import ks47team03.user.dto.Account;
 import ks47team03.user.dto.Deposit;
 import ks47team03.user.dto.TossPayment;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@Transactional
 public class UserDepositService {
 
 
@@ -163,14 +165,22 @@ public List<Map<String, Object>> getUserDepositPaySuccessList(String userId) {
 	public void payByTossPayments(TossPayment tossPayment) {
 		userDepositMapper.payByTossPaymentsById(tossPayment);
 		
+	}	
+
+	
+	public void updateDepositStatus(String orderId) {
+		log.info("서비스: 토스 웹훅 입금 확인 요청 - orderId: {}", orderId);
+		
+		// Mapper 호출하여 결제 상태 '결제완료'로 변경
+		// 주의: UserDepositMapper에 updatePaymentStatusToDone 메서드가 있어야 합니다.
+		int result = userDepositMapper.updatePaymentStatusToDone(orderId);
+		
+		if(result > 0) {
+			log.info("서비스: DB 상태 업데이트 성공");
+		} else {
+			log.warn("서비스: DB 업데이트 실패 (해당 orderId 없음)");
+		}
 	}
-
-
-	/*
-	 * public void updateDepositStatus(String orderId) { // Mapper를 호출하여 해당 orderId를
-	 * 가진 결제 건의 상태를 완료로 변경 userDepositMapper.updateDepositStatusByOrderId(orderId);
-	 * }
-	 */
 
 
 }

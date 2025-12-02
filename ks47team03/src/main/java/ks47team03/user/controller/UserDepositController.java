@@ -491,6 +491,50 @@ public class UserDepositController {
 		userDepositService.createDepositRefund(depositRefundHistory);
 		return "redirect:mydepositRefund";
 	}
+	@PostMapping("/webhook")
+	@ResponseBody
+public ResponseEntity<String> handleWebhook(@RequestBody String jsonBody) {
+        
+        log.info("🔔 [Webhook] 토스 웹훅 수신: {}", jsonBody);
+
+        JSONParser parser = new JSONParser();
+
+        try {
+            // 1. JSON 파싱
+            JSONObject jsonObject = (JSONObject) parser.parse(jsonBody);
+            
+            // 2. 이벤트 타입 및 데이터 추출
+            String eventType = (String) jsonObject.get("eventType");
+            JSONObject data = (JSONObject) jsonObject.get("data");
+            
+            String orderId = (String) data.get("orderId"); // 주문번호
+            String status = (String) data.get("status");   // 결제 상태
+            
+            log.info("🔔 [Webhook] 주문번호: {}, 상태: {}, 이벤트: {}", orderId, status, eventType);
+
+            // 3. 입금 완료 처리 로직
+            // eventType이 'DEPOSIT_CALLBACK'(가상계좌 입금) 이거나 status가 'DONE'(결제완료) 인 경우
+            if ("DEPOSIT_CALLBACK".equals(eventType) || "DONE".equals(status)) {
+                
+                // 서비스 호출: DB 상태를 '입금대기' -> '결제완료'로 변경
+                // 서비스에 updateDepositStatus 메서드가 필요합니다. (아래 2번 설명 참조)
+                userDepositService.updateDepositStatus(orderId);
+                
+                log.info("✅ [Webhook] DB 입금 완료 처리 성공: {}", orderId);
+            }
+
+            // 4. Toss 서버에 200 OK 응답 (이 응답을 안 주면 Toss가 계속 재전송함)
+            return ResponseEntity.ok("ok");
+
+        } catch (ParseException e) {
+            log.error("❌ [Webhook] JSON 파싱 에러", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("JSON Parsing Error");
+        } catch (Exception e) {
+            log.error("❌ [Webhook] 처리 중 내부 에러", e);
+            // 에러가 나더라도 Toss에는 500을 줘서 재시도하게 하거나, 상황에 따라 200을 주고 로그만 남길 수도 있음
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error");
+        }
+    }
 	
 	/*
 	 * @PostMapping("/webhook")
@@ -536,6 +580,12 @@ public class UserDepositController {
 	        case "92": return "토스뱅크";
 	        default: return "기타은행(" + bankCode + ")";
 	    }
+	    
+	    
+	    
+	   
+	    
+	    
 	    
 	}
 	
