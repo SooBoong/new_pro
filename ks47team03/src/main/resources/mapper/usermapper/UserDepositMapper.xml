@@ -297,9 +297,8 @@
     </update>
     
     <update id="updatePaymentStatusToDone" parameterType="String">
-    UPDATE tb_deposit_pay
-       SET payment_status = '결제완료'
-         , payment_date   = NOW()
+    UPDATE deposit_pay_history
+       SET static_code = 'deposit_sc9_2'
      WHERE order_id = #{orderId}
 </update>
 
